@@ -35,11 +35,11 @@ export async function main() {
     for (let fnName of Object.keys(module)) {
       if (!fnName.endsWith("_test")) continue;
       try {
-        module[fnName]();
+        await module[fnName]();
         process.stdout.write(`\u001b[32m.\u001b[0m`);
         passes++;
       } catch (error) {
-        let moduleName = "\ngleam/" + entry.name.slice(0, -3);
+        let moduleName = "\n" + js_path.slice(0, -4);
         process.stdout.write(`\n❌ ${moduleName}.${fnName}: ${error}\n`);
         failures++;
       }
