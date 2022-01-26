@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.6.1 - 2022-01-26
+
+- Fixed a bug where failed tests on the JavaScript target would crash the `main`
+  function.
+- Fixed a bug where tests on the JavaScript target could succeed regardless of
+  return value.
+
 ## v0.6.0 - 2022-01-09
 
 - Added support for OTP versions below 23.
