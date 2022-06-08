@@ -4,6 +4,8 @@ Gleam bindings to the Erlang EUnit test framework.
 
 A custom test runner is included for when compiled to JavaScript.
 
+Documentation is available on [HexDocs](https://hexdocs.pm/gleeunit/index.html).
+
 ## Usage
 
 Add this package to your Gleam project.
