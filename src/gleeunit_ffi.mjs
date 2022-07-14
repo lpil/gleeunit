@@ -51,6 +51,6 @@ ${passes + failures} tests, ${failures} failures`);
   process.exit(failures ? 1 : 0);
 }
 
-export async function crash(message) {
+export function crash(message) {
   throw new Error(message);
 }
