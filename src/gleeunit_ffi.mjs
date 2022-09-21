@@ -40,6 +40,8 @@ export async function main() {
         passes++;
       } catch (error) {
         let moduleName = "\n" + js_path.slice(0, -4);
+        const lineNumberInfo = `\nThe test failed at line ${error.line}\n`;
+        process.stdout.write(lineNumberInfo);
         process.stdout.write(`\n❌ ${moduleName}.${fnName}: ${error}\n`);
         failures++;
       }
