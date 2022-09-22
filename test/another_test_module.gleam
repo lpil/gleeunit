@@ -3,5 +3,5 @@ pub fn example_div_test() {
 }
 
 pub fn example_mult_test() {
-  assert 4 = 2 * 2
+  assert 4 = 2 * 7
 }
