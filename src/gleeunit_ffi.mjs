@@ -16,7 +16,7 @@ async function* gleamFiles(directory) {
 async function readRootPackageName() {
   let toml = await readFile("gleam.toml", "utf-8");
   for (let line of toml.split("\n")) {
-    let matches = line.match(/\s*name\s=\s"([a-z_]+)"/);
+    let matches = line.match(/\s*name\s*=\s*"([a-z][a-z0-9_]*)"/);  // Match regexp in compiler-cli/src/new.rs in validate_name()
     if (matches) return matches[1];
   }
   throw new Error("Could not determine package name from gleam.toml");
