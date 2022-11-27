@@ -1,5 +1,6 @@
 import { readdir, readFile } from "fs/promises";
 import { join as joinPath } from "path";
+import { Ok, Error } from "./gleam.mjs";
 
 async function* gleamFiles(directory) {
   let dirents = await readdir(directory, { withFileTypes: true });
@@ -22,7 +23,7 @@ async function readRootPackageName() {
   throw new Error("Could not determine package name from gleam.toml");
 }
 
-export async function main() {
+export async function run_tests() {
   let passes = 0;
   let failures = 0;
 
@@ -49,7 +50,11 @@ export async function main() {
 
   console.log(`
 ${passes + failures} tests, ${failures} failures`);
-  process.exit(failures ? 1 : 0);
+  return failures ? new Error(undefined) : new Ok(undefined);
+}
+
+export async function halt(result) {
+  process.exit(result === new Ok(undefined) ? 0 : 1);
 }
 
 export function crash(message) {
