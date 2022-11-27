@@ -53,8 +53,8 @@ ${passes + failures} tests, ${failures} failures`);
   return failures ? new Error(undefined) : new Ok(undefined);
 }
 
-export async function halt(result) {
-  process.exit(result === new Ok(undefined) ? 0 : 1);
+export async function halt(code) {
+  process.exit(code);
 }
 
 export function crash(message) {

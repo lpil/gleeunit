@@ -7,8 +7,8 @@
 /// If running on JavaScript tests will be run with a custom test runner.
 ///
 pub fn main() -> Nil {
-  do_run_tests()
-  |> do_halt()
+  run_tests()
+  |> halt()
 }
 
 pub fn run_tests() -> Result(Nil, Nil) {
@@ -16,14 +16,18 @@ pub fn run_tests() -> Result(Nil, Nil) {
 }
 
 pub fn halt(result: Result(Nil, Nil)) -> Nil {
-  do_halt(result)
+  let code = case result {
+    Ok(_) -> 0
+    Error(_) -> 1
+  }
+  do_halt(code)
 }
 
 if javascript {
   external fn do_run_tests() -> Result(Nil, Nil) =
     "./gleeunit_ffi.mjs" "run_tests"
 
-  external fn do_halt(result: Result(Nil, Nil)) -> Nil =
+  external fn do_halt(Int) -> Nil =
     "./gleeunit_ffi.mjs" "halt"
 }
 
@@ -46,15 +50,7 @@ if erlang {
     |> result.map(fn(_) { Nil })
   }
 
-  fn do_halt(result: Result(Nil, Nil)) -> Nil {
-    let code = case result {
-      Ok(_) -> 0
-      Error(_) -> 1
-    }
-    erl_halt(code)
-  }
-
-  external fn erl_halt(Int) -> Nil =
+  external fn do_halt(Int) -> Nil =
     "erlang" "halt"
 
   fn gleam_to_erlang_module_name(path: String) -> String {
