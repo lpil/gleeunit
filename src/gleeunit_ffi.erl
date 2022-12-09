@@ -18,7 +18,7 @@ should_not_equal(Actual, Expected) ->
     nil.
 should_be_ok(A) -> 
     ?assertMatch({ok, _}, A),
-    nil.
+    element(2, A).
 should_be_error(A) -> 
     ?assertMatch({error, _}, A),
-    nil.
+    element(2, A).
