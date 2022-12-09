@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8
+
+- `should.be_ok` and `should.be_error` now unwrap the result argument
+
 ## v0.7.2 - 2022-11-19
 
 - Update for Gleam v0.25.0.
