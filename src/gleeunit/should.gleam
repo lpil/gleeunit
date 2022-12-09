@@ -11,10 +11,10 @@ if erlang {
   pub external fn not_equal(a, a) -> Nil =
     "gleeunit_ffi" "should_not_equal"
 
-  pub external fn be_ok(Result(a, b)) -> Nil =
+  pub external fn be_ok(Result(a, b)) -> a =
     "gleeunit_ffi" "should_be_ok"
 
-  pub external fn be_error(Result(a, b)) -> Nil =
+  pub external fn be_error(Result(a, b)) -> b =
     "gleeunit_ffi" "should_be_error"
 }
 
@@ -55,14 +55,14 @@ if javascript {
 
   pub fn be_ok(a) {
     case a {
-      Ok(_) -> Nil
+      Ok(value) -> value
       _ -> crash(string.concat(["\n", stringify(a), "\nshould be ok"]))
     }
   }
 
   pub fn be_error(a) {
     case a {
-      Error(_) -> Nil
+      Error(error) -> error
       _ -> crash(string.concat(["\n", stringify(a), "\nshould be error"]))
     }
   }
