@@ -26,7 +26,7 @@ async function readRootPackageName() {
 }
 
 export async function main(test_modules, halts_on_error) {
-	let passes = 0;
+  let passes = 0;
   let failures = 0;
   const failureMsgs = [];
 
