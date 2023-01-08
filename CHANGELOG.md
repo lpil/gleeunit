@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.9.0 Gleeunity - 2023-01-08
+
+- Fork of Gleeunit 0.9.0:
+  - This is a fork of Gleeunit that adds the ability to specify a list of
+    specific modules via command line and allows calling Gleeunit as a
+    library instead as from CLI.
+  - I will attempt to keep this up to date with <https://hexdocs.pm/gleeunit>.
+  - This fork is being used primarily as a test runner target by <https://hexdocs.pm/glacier>.
+
 ## v0.9.0 - 2023-01-08
 
 - The JavaScript runner now also supports the Deno runtime.

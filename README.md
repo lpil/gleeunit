@@ -1,18 +1,28 @@
-# gleeunit
+# glacier_gleeunit
+
+**This is a fork of [*Gleeunit*](https://hex.pm/gleeunit) that and allows calling *Gleeunit* as a library instead via CLI and at the same time allows passing down a list of test modules.**
+
+**DO NOT install *Gleeunit* and this fork side by side in the same project.**
+
+```shell
+gleam test -- test/my_module_a_test.gleam test/my_module_b_test.gleam
+```
+
+* * *
 
 Gleam bindings to the Erlang EUnit test framework.
 
 A custom test runner is included for when compiled to JavaScript running on
 either NodeJS or Deno.
 
-Documentation is available on [HexDocs](https://hexdocs.pm/gleeunit/index.html).
+Documentation is available on [HexDocs](https://hexdocs.pm/glacier_gleeunit/index.html).
 
 ## Usage
 
 Add this package to your Gleam project.
 
 ```sh
-gleam add gleeunit --dev
+gleam add glacier_gleeunit --dev
 ```
 
 And then call the `gleeunit.main` function from your test main function.
