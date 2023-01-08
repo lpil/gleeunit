@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.0 - 2023-01-08
+
+- The JavaScript runner now also supports the Deno runtime.
+
 ## v0.8.0 - 2022-12-17
 
 - `should.be_ok` and `should.be_error` now return the contained value when the
