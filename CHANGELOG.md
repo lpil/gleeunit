@@ -7,7 +7,7 @@
     be called as a library/function with a list of test modules instead of
     just via CLI.
   - This fork is being used primarily as a test runner target by
-    <https://hexdocs.pm/packages/glacier>.
+    <https://hex.pm/packages/glacier>.
   - I will attempt to keep this up to date with `Gleeunit`.
 
 ## v0.9.0 - 2023-01-08
