@@ -17,7 +17,7 @@ gleam add gleeunit --dev
 
 And then call the `gleeunit.main` function from your test main function.
 
-```rust
+```gleam
 // In test/yourapp_test.gleam
 import gleeunit
 
@@ -29,7 +29,7 @@ pub fn main() {
 Now any public function with a name ending in `_test` in the `test` directory
 will be found and run as a test.
 
-```rust
+```gleam
 pub fn the_universe_test() {
   assert 1 = 1
 }
