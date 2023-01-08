@@ -1,36 +1,12 @@
-async function read_dir(path) {
-  if (globalThis.Deno) {
-    return Deno.readDir(path);
-  } else {
-    let { readdir } = await import("fs/promises");
-    return readdir(path);
-  }
-}
-
-function join_path(a, b) {
-  if (a.endsWith("/")) return a + b;
-  return a + "/" + b;
-}
-
-async function read_file(path) {
-  if (globalThis.Deno) {
-    return Deno.readTextFile(path);
-  } else {
-    let { readFile } = await import("fs/promises");
-    return readFile(path);
-  }
-}
-
 async function* gleamFiles(directory) {
-  let dirents = await read_dir(directory);
-  for await (let dirent of dirents) {
-    let path = join_path(directory, dirent.name);
+  for (let entry of await read_dir(directory)) {
+    let path = join_path(directory, entry);
     if (path.endsWith(".gleam")) {
       yield path;
     } else {
       try {
         yield* gleamFiles(path);
-      } catch (_) {
+      } catch (error) {
         // Could not read directory, assume it's a file
       }
     }
@@ -93,5 +69,33 @@ function exit(code) {
     Deno.exit(code);
   } else {
     process.exit(code);
+  }
+}
+
+async function read_dir(path) {
+  if (globalThis.Deno) {
+    let items = [];
+    for await (let item of Deno.readDir(path, { withFileTypes: true })) {
+      items.push(item.name);
+    }
+    return items;
+  } else {
+    let { readdir } = await import("fs/promises");
+    return readdir(path);
+  }
+}
+
+function join_path(a, b) {
+  if (a.endsWith("/")) return a + b;
+  return a + "/" + b;
+}
+
+async function read_file(path) {
+  if (globalThis.Deno) {
+    return Deno.readTextFile(path);
+  } else {
+    let { readFile } = await import("fs/promises");
+    let contents = await readFile(path);
+    return contents.toString();
   }
 }
