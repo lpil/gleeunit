@@ -1,12 +1,10 @@
 # glacier_gleeunit
 
-**This is a fork of [*Gleeunit*](https://hex.pm/gleeunit) that and allows calling *Gleeunit* as a library instead via CLI and at the same time allows passing down a list of test modules.**
+**This is a fork of [*Gleeunit*](https://hex.pm/gleeunit) that allows it to be called as a library/function with a list of test modules instead of just via CLI.**
+
+**This is a dependency of [*Glacier*](https://hex.pm/glacier).**
 
 **DO NOT install *Gleeunit* and this fork side by side in the same project.**
-
-```shell
-gleam test -- test/my_module_a_test.gleam test/my_module_b_test.gleam
-```
 
 * * *
 

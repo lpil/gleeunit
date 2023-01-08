@@ -1,7 +1,7 @@
 name = "glacier_gleeunit"
-version = "0.9.1"
+version = "0.9.0"
 licences = ["Apache-2.0"]
-description = "Gleam bindings to Erlang's EUnit test framework. This is a fork of Gleeunit that adds the ability to specify a list of specific modules via command line and allows calling Gleeunit as a library instead as from CLI."
+description = "Gleam bindings to Erlang's EUnit test framework. This is a fork of Gleeunit that allows it to be called as a library/function with a list of test modules instead of just via CLI."
 
 [javascript.deno]
 allow_read = [
