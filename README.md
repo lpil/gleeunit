@@ -1,8 +1,8 @@
 # glacier_gleeunit
 
-**This is a fork of [*Gleeunit*](https://hex.pm/gleeunit) that allows it to be called as a library/function with a list of test modules instead of just via CLI.**
+**This is a fork of [*Gleeunit*](https://hex.pm/packages/gleeunit) that allows it to be called as a library/function with a list of test modules instead of just via CLI.**
 
-**This is a dependency of [*Glacier*](https://hex.pm/glacier).**
+**This is a dependency of [*Glacier*](https://hex.pm/packages/glacier).**
 
 **DO NOT install *Gleeunit* and this fork side by side in the same project.**
 

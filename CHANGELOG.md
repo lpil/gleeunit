@@ -2,13 +2,13 @@
 
 ## v0.9.0 glacier_gleeunit - 2023-01-08
 
-- Fork of Gleeunit 0.9.0:
-  - This is a fork of [*Gleeunit*](https://hex.pm/gleeunit) that allows it to
+- Fork of `Gleeunit` 0.9.0:
+  - This is a fork of [*Gleeunit*](https://hex.pm/packages/gleeunit) that allows it to
     be called as a library/function with a list of test modules instead of
     just via CLI.
   - This fork is being used primarily as a test runner target by
-    <https://hexdocs.pm/glacier>.
-  - I will attempt to keep this up to date with <https://hexdocs.pm/gleeunit>.
+    <https://hexdocs.pm/packages/glacier>.
+  - I will attempt to keep this up to date with `Gleeunit`.
 
 ## v0.9.0 - 2023-01-08
 
