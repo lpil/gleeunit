@@ -13,9 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2.0.0
       - uses: erlef/setup-beam@v1.13.0
+      - uses: denoland/setup-deno@v1
         with:
           otp-version: "25.1"
           gleam-version: "0.25.2"
       - run: gleam format --check src test
-      - run: gleam test
-      - run: gleam test --target javascript
+
+      - run: gleam test --target erlang
+      - run: gleam test --target javascript --runtime node
+      - run: gleam test --target javascript --runtime deno
