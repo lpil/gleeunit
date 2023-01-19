@@ -1,5 +1,4 @@
-import * as Process from "process";
-import * as Fs from "fs";
+import * as NodeProcess from "node:process";
 import * as Gleam from "./gleam.mjs";
 
 // async function* gleamFiles(directory) {
@@ -122,25 +121,26 @@ async function read_file(path) {
 }
 
 export const file_exists = function (absolute_file_name) {
-  if (Fs.existsSync(absolute_file_name)) {
+  if (fs.existsSync(absolute_file_name)) {
     return true;
   }
   return false;
 };
 
 export const cwd = function() {
-	return Process.cwd();
+	return NodeProcess.cwd();
 };
 
 
 export const find_ext_files_recursive_in = function (file_ext, directory) {
   // TODO: use gleamFiles() and read_dir() instead.
+  const path = require("path");
 	let files = [];
   const getFilesRecursively = (directory) => {
-    const filesInDirectory = Fs.readdirSync(directory);
+    const filesInDirectory = fs.readdirSync(directory);
     for (const file of filesInDirectory) {
-      const absolute = join_path(directory, file);
-      if (Fs.statSync(absolute).isDirectory()) {
+      const absolute = path.join(directory, file);
+      if (fs.statSync(absolute).isDirectory()) {
         getFilesRecursively(absolute);
       } else if (absolute.endsWith(file_ext)) {
         files.push(absolute);
