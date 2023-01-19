@@ -1,5 +1,5 @@
 name = "glacier_gleeunit"
-version = "0.10.2"
+version = "0.10.3"
 licences = ["Apache-2.0"]
 description = "Gleam bindings to Erlang's EUnit test framework. This is a fork of Gleeunit that allows it to be called as a library/function with a list of test modules instead of just via CLI."
 

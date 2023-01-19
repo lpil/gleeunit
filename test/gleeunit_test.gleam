@@ -30,7 +30,7 @@ if javascript {
   fn start_args() -> List(String) {
     do_start_args()
     |> list.filter(fn(arg) {
-      arg != "--" && string.ends_with(arg, "glacier_gleeunit/gleam.main.mjs") == False
+      arg != "--" && string.ends_with(arg, "/gleam.main.mjs") == False
     })
   }
 

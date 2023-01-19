@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.10.3-glacier - 2023-01-19
+
+- make hack a bit more generic
+
 ## v0.10.2-glacier - 2023-01-19
 
 - Fixed some bugs around erlang that I missed.
