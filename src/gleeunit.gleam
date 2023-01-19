@@ -1,6 +1,7 @@
 import gleam/io
 import gleam/list
 import gleam/function
+import gleam/string
 
 /// Find and run all test functions for the current project using Erlang's EUnit
 /// test framework.
@@ -30,6 +31,10 @@ pub fn run(
 
 fn find_matching_test_module_files(test_module_files) {
   test_module_files
+  |> list.filter(fn(module_name) {
+    module_name
+    |> string.ends_with(".gleam") == True
+  })
   |> list.filter(fn(module_name) {
     let absolute_module_file_name = get_cwd() <> "/" <> module_name
 

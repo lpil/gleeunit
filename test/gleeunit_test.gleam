@@ -1,6 +1,6 @@
-import gleeunit
 import gleam/list
 import gleam/string
+import gleeunit
 
 pub fn main() {
   case start_args() {
