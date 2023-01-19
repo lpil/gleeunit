@@ -2,21 +2,6 @@ import * as Process from "process";
 import * as Fs from "fs";
 import * as Gleam from "./gleam.mjs";
 
-// async function* gleamFiles(directory) {
-//   for (let entry of await read_dir(directory)) {
-//     let path = join_path(directory, entry);
-//     if (path.endsWith(".gleam")) {
-//       yield path;
-//     } else {
-//       try {
-//         yield* gleamFiles(path);
-//       } catch (error) {
-//         // Could not read directory, assume it's a file
-//       }
-//     }
-//   }
-// }
-
 async function readRootPackageName() {
   let toml = await read_file("gleam.toml", "utf-8");
   for (let line of toml.split("\n")) {
