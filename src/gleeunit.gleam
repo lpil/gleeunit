@@ -55,7 +55,6 @@ if erlang {
   import gleam/dynamic.{Dynamic}
   import gleam/int
   import gleam/result
-  import gleam/string
 
   fn run_suite(
     test_module_files: List(String),
