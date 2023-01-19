@@ -3,6 +3,7 @@
 ## v0.10.0-glacier - 2023-01-19
 
 - Merged upstream gleeunit 0.10.0.
+- Fixed running on deno with help of <https://github.com/brettkolodny> 💜.
 
 ## v0.10.0 - 2023-01-19
 
