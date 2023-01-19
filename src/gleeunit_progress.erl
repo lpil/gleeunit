@@ -271,31 +271,42 @@ print_failure_fun(#state{status=Status}=State) ->
             Count + 1
     end.
 
-%
-% New Gleeunit specific formatters
-%
-print_failure_reason({error, {
-    error,
-    #{
-        function := Function,
-        gleam_error := assert,
-        line := Line,
-        message := Message,
-        module := Module,
-        value := Value
-    },
-    Stack
-}}, Output, State) when is_list(Stack) ->
+print_gleam_location(#{function := Function, line := Line, module := Module }, State) ->
+    print_colored(indent(5, "Location: ", []), ?CYAN, State),
+    print_colored(indent(0, "~s.~s:~p~n", [Module, Function, Line]), ?RESET, State);
+print_gleam_location(_, _) ->
+    ok.
+
+print_gleam_failure_reason(
+    #{gleam_error := assert, message := Message, value := Value},
+    State
+) ->
     print_colored(indent(5, "~s~n", [Message]), ?RED, State),
     print_colored(indent(5, "Value:    ", []), ?CYAN, State),
-    print_colored(indent(0, "~s~n", [gleam@string:inspect(Value)]), ?RESET, State),
-    print_colored(indent(5, "Location: ", []), ?CYAN, State),
-    print_colored(indent(0, "~s.~s:~p~n", [Module, Function, Line]), ?RESET, State),
+    print_colored(indent(0, "~s~n", [gleam@string:inspect(Value)]), ?RESET, State);
+print_gleam_failure_reason(
+    #{gleam_error := todo, message := Message},
+    State
+) ->
+    print_colored(indent(5, "Todo. ~s~n", [Message]), ?RED, State);
+print_gleam_failure_reason(Error, State) ->
+    print_colored(indent(5, "~p~n", [Error]), ?RED, State).
+
+% New Gleeunit specific formatters
+print_failure_reason(
+    {error, {error, #{gleam_error := _} = Error, Stack}}, Output, State
+) when is_list(Stack) ->
+    print_gleam_failure_reason(Error, State),
+    print_gleam_location(Error, State),
     print_stack(Stack, State),
     print_failure_output(5, Output, State);
-%
+print_failure_reason({error, {error, {case_clause, Value}, Stack}}, Output, State) when is_list(Stack) ->
+    print_colored(indent(5, "No case clause matched~n", []), ?RED, State),
+    print_colored(indent(5, "Value: ", []), ?CYAN, State),
+    print_colored(indent(0, "~s~n", [gleam@string:inspect(Value)]), ?RESET, State),
+    print_stack(Stack, State),
+    print_failure_output(5, Output, State);
 % From the original Erlang version
-%
 print_failure_reason({skipped, Reason}, _Output, State) ->
     print_colored(io_lib:format("     ~ts~n", [format_pending_reason(Reason)]),
                   ?RED, State);
@@ -336,7 +347,7 @@ print_failure_output(Indent, Output, State) ->
 
 print_assertion_failure({Type, Props}, Stack, Output, State) ->
     FailureDesc = format_assertion_failure(Type, Props, 5),
-    {M,F,A,Loc} = lists:last(Stack),
+    {M,F,_,Loc} = lists:last(Stack),
     LocationText = io_lib:format("     %% ~ts:~p:in `~ts`", [proplists:get_value(file, Loc),
                                                            proplists:get_value(line, Loc),
                                                            format_function_name(M,F)]),

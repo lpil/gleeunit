@@ -10,3 +10,16 @@ pub fn record_assert_test() {
   // assert Ok(_) = Error(#(1, "error", Nil))
   Nil
 }
+
+pub fn todo_test() {
+  // todo("Hello, Joe!")
+  Nil
+}
+
+pub fn inexhaustive_case_test() {
+  // case Ok(123) {
+  //   Ok(12) -> Nil
+  //   Error(_) -> Nil
+  // }
+  Nil
+}
