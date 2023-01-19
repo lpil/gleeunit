@@ -1,25 +1,4 @@
-%% eunit_formatters https://github.com/seancribbs/eunit_formatters
-%% Changes made to the original code:
-%% - Embedded binomial_heap.erl file contents into current file.
-%% - ignore warnings for heap implementation to keep complete implementation.
-%% - removed "namespaced_dicts" dependant preprocessor directive, 
-%%   as it does not apply for our project, we just assume OTP version >= 17.
-%%   This is because the previous verison uses rebar, and we won't do that.
-
-%% Copyright 2014 Sean Cribbs
-%%
-%% Licensed under the Apache License, Version 2.0 (the "License");
-%% you may not use this file except in compliance with the License.
-%% You may obtain a copy of the License at
-%%
-%%   http://www.apache.org/licenses/LICENSE-2.0
-%%
-%% Unless required by applicable law or agreed to in writing, software
-%% distributed under the License is distributed on an "AS IS" BASIS,
-%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-%% See the License for the specific language governing permissions and
-%% limitations under the License.
-
+%% A formatter adapted from Sean Cribb's https://github.com/seancribbs/eunit_formatters
 
 %% @doc A listener/reporter for eunit that prints '.' for each
 %% success, 'F' for each failure, and 'E' for each error. It can also
@@ -292,6 +271,31 @@ print_failure_fun(#state{status=Status}=State) ->
             Count + 1
     end.
 
+%
+% New Gleeunit specific formatters
+%
+print_failure_reason({error, {
+    error,
+    #{
+        function := Function,
+        gleam_error := assert,
+        line := Line,
+        message := Message,
+        module := Module,
+        value := Value
+    },
+    Stack
+}}, Output, State) when is_list(Stack) ->
+    print_colored(indent(5, "~s~n", [Message]), ?RED, State),
+    print_colored(indent(5, "Value:    ", []), ?CYAN, State),
+    print_colored(indent(0, "~s~n", [gleam@string:inspect(Value)]), ?RESET, State),
+    print_colored(indent(5, "Location: ", []), ?CYAN, State),
+    print_colored(indent(0, "~s.~s:~p~n", [Module, Function, Line]), ?RESET, State),
+    print_stack(Stack, State),
+    print_failure_output(5, Output, State);
+%
+% From the original Erlang version
+%
 print_failure_reason({skipped, Reason}, _Output, State) ->
     print_colored(io_lib:format("     ~ts~n", [format_pending_reason(Reason)]),
                   ?RED, State);
@@ -307,6 +311,9 @@ print_failure_reason({error, Reason}, Output, State) ->
     print_colored(indent(5, "Failure: ~p~n", [Reason]), ?RED, State),
     print_failure_output(5, Output, State).
 
+gleam_format_module_name(Module) ->
+    string:replace(atom_to_list(Module), "@", "/", all).
+
 print_stack(Stack, State) ->
     print_colored(indent(5, "Stacktrace:~n", []), ?CYAN, State),
     print_stackframes(Stack, State).
@@ -315,7 +322,8 @@ print_stackframes([{eunit_test, _, _, _} | Stack], State) ->
 print_stackframes([{eunit_proc, _, _, _} | Stack], State) ->
     print_stackframes(Stack, State);
 print_stackframes([{Module, Function, _Arity, _Location} | Stack], State) ->
-    print_colored(indent(7, "~p.~p~n", [Module, Function]), ?CYAN, State),
+    GleamModule = gleam_format_module_name(Module),
+    print_colored(indent(7, "~s.~p~n", [GleamModule, Function]), ?CYAN, State),
     print_stackframes(Stack, State);
 print_stackframes([], _State) ->
     ok.
@@ -331,7 +339,7 @@ print_assertion_failure({Type, Props}, Stack, Output, State) ->
     {M,F,A,Loc} = lists:last(Stack),
     LocationText = io_lib:format("     %% ~ts:~p:in `~ts`", [proplists:get_value(file, Loc),
                                                            proplists:get_value(line, Loc),
-                                                           format_function_name(M,F,A)]),
+                                                           format_function_name(M,F)]),
     print_colored(FailureDesc, ?RED, State),
     io:nl(),
     print_colored(LocationText, ?CYAN, State),
@@ -432,8 +440,9 @@ print_colored(Text, _Color, #state{colored=false}) ->
 %%------------------------------------------
 %% Generic data formatters
 %%------------------------------------------
-format_function_name(M, F, A) ->
-    io_lib:format("~ts:~ts/~p", [M, F, A]).
+format_function_name(M, F) ->
+    M1 = gleam_format_module_name(M),
+    io_lib:format("~ts.~ts", [M1, F]).
 
 format_optional_result(0, _) ->
     [];
@@ -441,7 +450,7 @@ format_optional_result(Count, Text) ->
     io_lib:format(", ~p ~ts", [Count, Text]).
 
 format_test_identifier(Data) ->
-    {Mod, Fun, Arity} = proplists:get_value(source, Data),
+    {Mod, Fun, _} = proplists:get_value(source, Data),
     Line = case proplists:get_value(line, Data) of
                0 -> "";
                L -> io_lib:format(":~p", [L])
@@ -450,7 +459,7 @@ format_test_identifier(Data) ->
                undefined ->  "";
                DescText -> io_lib:format(": ~ts", [DescText])
            end,
-    io_lib:format("~ts~ts~ts", [format_function_name(Mod, Fun, Arity), Line, Desc]).
+    io_lib:format("~ts~ts~ts", [format_function_name(Mod, Fun), Line, Desc]).
 
 format_time(undefined) ->
     "? seconds";
@@ -458,9 +467,11 @@ format_time(Time) ->
     io_lib:format("~.3f seconds", [Time / 1000]).
 
 format_pending_reason({module_not_found, M}) ->
-    io_lib:format("Module '~ts' missing", [M]);
-format_pending_reason({no_such_function, {M,F,A}}) ->
-    io_lib:format("Function ~ts undefined", [format_function_name(M,F,A)]);
+    M1 = gleam_format_module_name(M),
+    io_lib:format("Module '~ts' missing", [M1]);
+format_pending_reason({no_such_function, {M,F,_}}) ->
+    M1 = gleam_format_module_name(M),
+    io_lib:format("Function ~ts undefined", [format_function_name(M1,F)]);
 format_pending_reason({exit, Reason}) ->
     io_lib:format("Related process exited with reason: ~p", [Reason]);
 format_pending_reason(Reason) ->
