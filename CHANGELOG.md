@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.10.2-glacier - 2023-01-19
+
+- Fixed some bugs around erlang that I missed.
+
 ## v0.10.1-glacier - 2023-01-19
 
 - Fixed more bugs around argv that should not exist and files that are not valid gleam test modules.

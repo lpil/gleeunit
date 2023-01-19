@@ -1,5 +1,3 @@
-import gleam/list
-import gleam/string
 import gleeunit
 
 pub fn main() {
@@ -18,12 +16,17 @@ pub fn some_other_test() {
 }
 
 if erlang {
+  import gleam/erlang
+
   fn start_args() -> List(String) {
     erlang.start_arguments()
   }
 }
 
 if javascript {
+  import gleam/list
+  import gleam/string
+
   fn start_args() -> List(String) {
     do_start_args()
     |> list.filter(fn(arg) {
