@@ -272,23 +272,28 @@ print_failure_fun(#state{status=Status}=State) ->
     end.
 
 print_gleam_location(#{function := Function, line := Line, module := Module }, State) ->
-    print_colored(indent(5, "Location: ", []), ?CYAN, State),
-    print_colored(indent(0, "~s.~s:~p~n", [Module, Function, Line]), ?RESET, State);
+    X = indent(5, "location: ~s.~s:~p~n", [Module, Function, Line]),
+    print_colored(X, ?CYAN, State);
 print_gleam_location(_, _) ->
     ok.
+
+inspect(X) ->
+    gleam@string:inspect(X).
 
 print_gleam_failure_reason(
     #{gleam_error := assert, message := Message, value := Value},
     State
 ) ->
     print_colored(indent(5, "~s~n", [Message]), ?RED, State),
-    print_colored(indent(5, "Value:    ", []), ?CYAN, State),
-    print_colored(indent(0, "~s~n", [gleam@string:inspect(Value)]), ?RESET, State);
+    print_colored(indent(5, "   value: ", []), ?RED, State),
+    print_colored(indent(0, "~s~n", [inspect(Value)]), ?RESET, State);
 print_gleam_failure_reason(
     #{gleam_error := todo, message := Message},
     State
 ) ->
-    print_colored(indent(5, "Todo. ~s~n", [Message]), ?RED, State);
+    print_colored(indent(5, "todo expression run~n", []), ?RED, State),
+    print_colored(indent(5, " message: ", []), ?RED, State),
+    print_colored(indent(0, "~s~n", [Message]), ?RESET, State);
 print_gleam_failure_reason(Error, State) ->
     print_colored(indent(5, "~p~n", [Error]), ?RED, State).
 
@@ -303,16 +308,16 @@ print_failure_reason(
 print_failure_reason({error, {error, {case_clause, Value}, Stack}}, Output, State) when is_list(Stack) ->
     print_colored(indent(5, "No case clause matched~n", []), ?RED, State),
     print_colored(indent(5, "Value: ", []), ?CYAN, State),
-    print_colored(indent(0, "~s~n", [gleam@string:inspect(Value)]), ?RESET, State),
+    print_colored(indent(0, "~s~n", [inspect(Value)]), ?RESET, State),
     print_stack(Stack, State),
     print_failure_output(5, Output, State);
 % From the original Erlang version
 print_failure_reason({skipped, Reason}, _Output, State) ->
     print_colored(io_lib:format("     ~ts~n", [format_pending_reason(Reason)]),
                   ?RED, State);
-print_failure_reason({error, {_Class, Term, Stack}}, Output, State) when
+print_failure_reason({error, {_Class, Term, _}}, Output, State) when
         is_tuple(Term), tuple_size(Term) == 2, is_list(element(2, Term)) ->
-    print_assertion_failure(Term, Stack, Output, State),
+    print_assertion_failure(Term, State),
     print_failure_output(5, Output, State);
 print_failure_reason({error, {error, Error, Stack}}, Output, State) when is_list(Stack) ->
     print_colored(indent(5, "Failure: ~p~n", [Error]), ?RED, State),
@@ -326,7 +331,7 @@ gleam_format_module_name(Module) ->
     string:replace(atom_to_list(Module), "@", "/", all).
 
 print_stack(Stack, State) ->
-    print_colored(indent(5, "Stacktrace:~n", []), ?CYAN, State),
+    print_colored(indent(5, "stacktrace:~n", []), ?CYAN, State),
     print_stackframes(Stack, State).
 print_stackframes([{eunit_test, _, _, _} | Stack], State) ->
     print_stackframes(Stack, State);
@@ -343,19 +348,11 @@ print_stackframes([], _State) ->
 print_failure_output(_, <<>>, _) -> ok;
 print_failure_output(_, undefined, _) -> ok;
 print_failure_output(Indent, Output, State) ->
-    print_colored(indent(Indent, "Output: ~ts", [Output]), ?CYAN, State).
+    print_colored(indent(Indent, "output: ~ts", [Output]), ?CYAN, State).
 
-print_assertion_failure({Type, Props}, Stack, Output, State) ->
+print_assertion_failure({Type, Props}, State) ->
     FailureDesc = format_assertion_failure(Type, Props, 5),
-    {M,F,_,Loc} = lists:last(Stack),
-    LocationText = io_lib:format("     %% ~ts:~p:in `~ts`", [proplists:get_value(file, Loc),
-                                                           proplists:get_value(line, Loc),
-                                                           format_function_name(M,F)]),
     print_colored(FailureDesc, ?RED, State),
-    io:nl(),
-    print_colored(LocationText, ?CYAN, State),
-    io:nl(),
-    print_failure_output(5, Output, State),
     io:nl().
 
 print_pending(#state{skips=[]}) ->
@@ -507,8 +504,8 @@ format_assertion_failure(Type, Props, I) when Type =:= assertion_failed
              end];
         HasHamcrestProps ->
             [indent(I, "Failure: ?assertThat(~p)~n", [proplists:get_value(matcher, Props)]),
-             indent(I, "  expected: ~p~n", [proplists:get_value(expected, Props)]),
-             indent(I, "       got: ~p", [proplists:get_value(actual, Props)])];
+             indent(I, "  expected: ~p~n", [inspect(proplists:get_value(expected, Props))]),
+             indent(I, "       got: ~p", [inspect(proplists:get_value(actual, Props))])];
         true ->
             [indent(I, "Failure: unknown assert: ~p", [Props])]
     end;
@@ -533,22 +530,18 @@ format_assertion_failure(Type, Props, I) when Type =:= assertNotMatch_failed
 
 format_assertion_failure(Type, Props, I) when Type =:= assertEqual_failed
                                             ; Type =:= assertEqual  ->
-    Expr = proplists:get_value(expression, Props),
-    Expected = proplists:get_value(expected, Props),
-    Value = proplists:get_value(value, Props),
-    [indent(I, "Failure: ?assertEqual(~w, ~ts)~n", [Expected,
-                                                         Expr]),
-     indent(I, "  expected: ~p~n", [Expected]),
-     indent(I, "       got: ~p", [Value])];
+    Expected = inspect(proplists:get_value(expected, Props)),
+    Value = inspect(proplists:get_value(value, Props)),
+    [indent(I, "Values were not equal~n", []),
+     indent(I, "expected: ~s~n", [Expected]),
+     indent(I, "     got: ~s", [Value])];
 
 format_assertion_failure(Type, Props, I) when Type =:= assertNotEqual_failed
                                             ; Type =:= assertNotEqual ->
-    Expr = proplists:get_value(expression, Props),
-    Value = proplists:get_value(value, Props),
-    [indent(I, "Failure: ?assertNotEqual(~p, ~ts)~n",
-            [Value, Expr]),
-     indent(I, "  expected not: == ~p~n", [Value]),
-     indent(I, "           got:    ~p", [Value])];
+    Value = inspect(proplists:get_value(value, Props)),
+    [indent(I, "Values were equal~n", []),
+     indent(I, "expected: not ~s~n,", [Value]),
+     indent(I, "     got: ~s", [Value])];
 
 format_assertion_failure(Type, Props, I) when Type =:= assertException_failed
                                             ; Type =:= assertException ->

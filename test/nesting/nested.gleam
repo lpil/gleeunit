@@ -23,3 +23,15 @@ pub fn inexhaustive_case_test() {
   // }
   Nil
 }
+
+pub fn should_equal_test() {
+  // Ok(#(123, "ok"))
+  // |> should.equal(Error(Nil))
+  Nil
+}
+
+pub fn should_not_equal_test() {
+  // Error(Nil)
+  // |> should.not_equal(Error(Nil))
+  Nil
+}
