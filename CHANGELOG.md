@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.10.1-glacier - 2023-01-19
+
+- Fixed more bugs around argv that should not exist and files that are not valid gleam test modules.
+
 ## v0.10.0-glacier - 2023-01-19
 
 - Merged upstream gleeunit 0.10.0.
