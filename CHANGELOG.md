@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.10.0 - 2023-01-19
+
+- The output for failed assertions when targeting Erlang has been improved.
+
 ## v0.9.0 - 2023-01-08
 
 - The JavaScript runner now also supports the Deno runtime.
