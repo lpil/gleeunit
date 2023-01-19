@@ -1,6 +1,14 @@
 # Changelog
 
-## v0.9.0 glacier_gleeunit - 2023-01-08
+## v0.10.0-glacier - 2023-01-19
+
+- Merged upstream gleeunit 0.10.0.
+
+## v0.10.0 - 2023-01-19
+
+- The output for failed assertions when targeting Erlang has been improved.
+
+## v0.9.0-glacier - 2023-01-08
 
 - Fork of `Gleeunit` 0.9.0:
   - This is a fork of [*Gleeunit*](https://hex.pm/packages/gleeunit) that allows it to
@@ -8,7 +16,7 @@
     just via CLI.
   - This fork is being used primarily as a test runner target by
     <https://hex.pm/packages/glacier>.
-  - I will attempt to keep this up to date with `Gleeunit`.
+  - I will attempt to keep this in sync with `lpil/gleeunit`.
 
 ## v0.9.0 - 2023-01-08
 
