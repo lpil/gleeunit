@@ -38,8 +38,9 @@ fn find_matching_test_module_files(test_module_files) {
       case exists {
         True -> Nil
         False ->
-          // TODO: gleam 0.26 io.print_error()
-          io.println("Error: Could not find " <> absolute_module_file_name)
+          io.println_error(
+            "Error: Could not find " <> absolute_module_file_name,
+          )
       }
     })
   })
@@ -81,8 +82,7 @@ if erlang {
       False, 1 -> Nil
       False, unhandled_exit_code -> {
         "Unexpected Error Code: " <> int.to_string(unhandled_exit_code)
-        // TODO: Gleam 0.26 io.print_errorln
-        |> io.println
+        |> io.println_error
         Nil
       }
     }

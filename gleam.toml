@@ -13,7 +13,7 @@ allow_read = [
 ]
 
 [dependencies]
-gleam_stdlib = "~> 0.19"
+gleam_stdlib = "~> 0.26"
 
 [dev-dependencies]
 # some_test_package = "~> 1.0.0"
