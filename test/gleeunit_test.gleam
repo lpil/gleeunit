@@ -3,17 +3,7 @@ import gleam/list
 import gleam/string
 
 pub fn main() {
-  let start_args = start_args()
-
-  let start_args =
-    list.filter(
-      start_args,
-      fn(arg) {
-        string.ends_with(arg, "glacier_gleeunit/gleam.main.mjs") == False && arg != "--"
-      },
-    )
-
-  case start_args {
+  case start_args() {
     [] -> gleeunit.main()
     start_args -> gleeunit.run(start_args, halts_on_error: False)
   }
@@ -34,6 +24,13 @@ if erlang {
 }
 
 if javascript {
-  external fn start_args() -> List(String) =
+  fn start_args() -> List(String) {
+    do_start_args()
+    |> list.filter(fn(arg) {
+      arg != "--" && string.ends_with(arg, "glacier_gleeunit/gleam.main.mjs") == False
+    })
+  }
+
+  external fn do_start_args() -> List(String) =
     "./gleeunit_ffi.mjs" "start_args"
 }
