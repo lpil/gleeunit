@@ -1,4 +1,3 @@
 {
-  "fs" : "https://deno.land/std@0.173.0/node/fs.ts",
-  "process" : "https://deno.land/std@0.173.0/node/process.ts"
+  "importMap": "./import_map.json"
 }
