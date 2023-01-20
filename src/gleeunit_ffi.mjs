@@ -1,6 +1,6 @@
-import * as RuntimeProcess from "process";
-import * as Fs from "fs";
 import * as Gleam from "./gleam.mjs";
+import * as NodeFs from "fs";
+import * as NodeProcess from "process";
 
 async function readRootPackageName() {
   let toml = await read_file("gleam.toml", "utf-8");
@@ -40,13 +40,13 @@ export async function main(test_modules, halts_on_error) {
     }
   }
 
-	write("\n");
+  write("\n");
   let result_info = `${passes + failures} tests, ${failures} failures`;
   if (failures == 0) {
     result_info = `\u001b[32m${result_info}\u001b[0m`;
   } else {
-		write("Failures:\n\n");
-		write(failureMsgs.join("\n") + "\n");
+    write("Failures:\n\n");
+    write(failureMsgs.join("\n") + "\n");
     result_info = `\u001b[31m${result_info}\u001b[0m`;
   }
   write(result_info + "\n");
@@ -107,25 +107,25 @@ async function read_file(path) {
 }
 
 export const file_exists = function (absolute_file_name) {
-  if (Fs.existsSync(absolute_file_name)) {
+  if (NodeFs.existsSync(absolute_file_name)) {
     return true;
   }
   return false;
 };
 
-export const cwd = function() {
-	return RuntimeProcess.cwd();
+export const cwd = function () {
+  return NodeProcess.cwd();
 };
 
 
 export const find_ext_files_recursive_in = function (file_ext, directory) {
-  // TODO: use gleamFiles() and read_dir() instead.
-	let files = [];
+  // TODO: use gleamFiles() and read_dir() instead?
+  let files = [];
   const getFilesRecursively = (directory) => {
-    const filesInDirectory = Fs.readdirSync(directory);
+    const filesInDirectory = NodeFs.readdirSync(directory);
     for (const file of filesInDirectory) {
       const absolute = join_path(directory, file);
-      if (Fs.statSync(absolute).isDirectory()) {
+      if (NodeFs.statSync(absolute).isDirectory()) {
         getFilesRecursively(absolute);
       } else if (absolute.endsWith(file_ext)) {
         files.push(absolute);
@@ -138,5 +138,5 @@ export const find_ext_files_recursive_in = function (file_ext, directory) {
 };
 
 export const start_args = function () {
-	return Gleam.List.fromArray(RuntimeProcess.argv.slice(1));
+  return Gleam.List.fromArray(NodeProcess.argv.slice(1));
 };
