@@ -1,6 +1,6 @@
 import * as Gleam from "./gleam.mjs";
-import * as NodeFs from "fs";
-import * as NodeProcess from "process";
+import * as fs from "fs";
+import * as process from "process";
 
 async function readRootPackageName() {
   let toml = await read_file("gleam.toml", "utf-8");
@@ -107,14 +107,14 @@ async function read_file(path) {
 }
 
 export const file_exists = function (absolute_file_name) {
-  if (NodeFs.existsSync(absolute_file_name)) {
+  if (fs.existsSync(absolute_file_name)) {
     return true;
   }
   return false;
 };
 
 export const cwd = function () {
-  return NodeProcess.cwd();
+  return process.cwd();
 };
 
 
@@ -122,10 +122,10 @@ export const find_ext_files_recursive_in = function (file_ext, directory) {
   // TODO: use gleamFiles() and read_dir() instead?
   let files = [];
   const getFilesRecursively = (directory) => {
-    const filesInDirectory = NodeFs.readdirSync(directory);
+    const filesInDirectory = fs.readdirSync(directory);
     for (const file of filesInDirectory) {
       const absolute = join_path(directory, file);
-      if (NodeFs.statSync(absolute).isDirectory()) {
+      if (fs.statSync(absolute).isDirectory()) {
         getFilesRecursively(absolute);
       } else if (absolute.endsWith(file_ext)) {
         files.push(absolute);
@@ -138,5 +138,5 @@ export const find_ext_files_recursive_in = function (file_ext, directory) {
 };
 
 export const start_args = function () {
-  return Gleam.List.fromArray(NodeProcess.argv.slice(1));
+  return Gleam.List.fromArray(process.argv.slice(1));
 };
