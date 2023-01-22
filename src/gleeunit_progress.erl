@@ -286,7 +286,7 @@ print_gleam_failure_reason(
 ) ->
     print_colored(indent(5, "~s~n", [Message]), ?RED, State),
     print_colored(indent(5, "   value: ", []), ?RED, State),
-    print_colored(indent(0, "~s~n", [inspect(Value)]), ?RESET, State);
+    print_colored(indent(0, "~ts~n", [inspect(Value)]), ?RESET, State);
 print_gleam_failure_reason(
     #{gleam_error := todo, message := Message},
     State
@@ -308,7 +308,7 @@ print_failure_reason(
 print_failure_reason({error, {error, {case_clause, Value}, Stack}}, Output, State) when is_list(Stack) ->
     print_colored(indent(5, "No case clause matched~n", []), ?RED, State),
     print_colored(indent(5, "Value: ", []), ?CYAN, State),
-    print_colored(indent(0, "~s~n", [inspect(Value)]), ?RESET, State),
+    print_colored(indent(0, "~ts~n", [inspect(Value)]), ?RESET, State),
     print_stack(Stack, State),
     print_failure_output(5, Output, State);
 % From the original Erlang version
@@ -504,8 +504,8 @@ format_assertion_failure(Type, Props, I) when Type =:= assertion_failed
              end];
         HasHamcrestProps ->
             [indent(I, "Failure: ?assertThat(~p)~n", [proplists:get_value(matcher, Props)]),
-             indent(I, "  expected: ~p~n", [inspect(proplists:get_value(expected, Props))]),
-             indent(I, "       got: ~p", [inspect(proplists:get_value(actual, Props))])];
+             indent(I, "  expected: ~ts~n", [inspect(proplists:get_value(expected, Props))]),
+             indent(I, "       got: ~ts", [inspect(proplists:get_value(actual, Props))])];
         true ->
             [indent(I, "Failure: unknown assert: ~p", [Props])]
     end;
@@ -533,15 +533,15 @@ format_assertion_failure(Type, Props, I) when Type =:= assertEqual_failed
     Expected = inspect(proplists:get_value(expected, Props)),
     Value = inspect(proplists:get_value(value, Props)),
     [indent(I, "Values were not equal~n", []),
-     indent(I, "expected: ~s~n", [Expected]),
-     indent(I, "     got: ~s", [Value])];
+     indent(I, "expected: ~ts~n", [Expected]),
+     indent(I, "     got: ~ts", [Value])];
 
 format_assertion_failure(Type, Props, I) when Type =:= assertNotEqual_failed
                                             ; Type =:= assertNotEqual ->
     Value = inspect(proplists:get_value(value, Props)),
     [indent(I, "Values were equal~n", []),
-     indent(I, "expected: not ~s~n,", [Value]),
-     indent(I, "     got: ~s", [Value])];
+     indent(I, "expected: not ~ts~n,", [Value]),
+     indent(I, "     got: ~ts", [Value])];
 
 format_assertion_failure(Type, Props, I) when Type =:= assertException_failed
                                             ; Type =:= assertException ->
