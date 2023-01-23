@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.10.1 - 2023-01-23
+
+- Fixed a bug where unicode characters would be printed incorrectly.
+
 ## v0.10.0 - 2023-01-19
 
 - The output for failed assertions when targeting Erlang has been improved.
