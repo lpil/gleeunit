@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.10.12-glacier - 2023-01-31
+
+- Attempt to fix deno testing on Glacier
+
 ## v0.10.1 - 2023-01-23
 
 - Fixed a bug where unicode characters would be printed incorrectly.

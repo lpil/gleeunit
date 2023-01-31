@@ -1,12 +1,10 @@
 name = "glacier_gleeunit"
-version = "0.10.11" # If not in sync with gleeunit then the bugfix release is by 0.0.10 version numbers increased
+version = "0.10.12" # If not on par with gleeunit then the bugfix release is by 0.0.10 version numbers increased beyond gleeunits version number
 licences = ["Apache-2.0"]
 description = "Gleam bindings to Erlang's EUnit test framework. This is a fork of Gleeunit that allows it to be called as a library/function with a list of test modules instead of just via CLI."
 
 [javascript.deno]
-allow_read = [
-	"./",
-]
+allow_read = ["./"]
 
 [dependencies]
 gleam_stdlib = "~> 0.26"

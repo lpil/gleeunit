@@ -1,6 +1,6 @@
 import * as Gleam from "./gleam.mjs";
-import * as fs from "fs";
-import * as process from "process";
+import fs from "node:fs";
+import process from "node:process";
 
 async function readRootPackageName() {
   let toml = await read_file("gleam.toml", "utf-8");
