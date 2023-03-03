@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.11.0 - Unreleased
+
+- Dependency upgrade and code fixes to be in line with 0.27.0
+
 ## v0.10.1 - 2023-01-23
 
 - Fixed a bug where unicode characters would be printed incorrectly.
