@@ -22,6 +22,7 @@ should_be_ok(A) ->
 should_be_error(A) ->
     ?assertMatch({error, _}, A),
     element(2, A).
+
 get_cwd() ->
     {ok, Cwd} = file:get_cwd(),
     Cwd.
