@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.11.10
+
+- Merge with gleeunit main
+
+## v0.11.0 - Unreleased
+
+- Dependency upgrade and code fixes to be in line with 0.27.0
+
 ## v0.10.12-glacier - 2023-01-31
 
 - Attempt to fix deno testing on Glacier

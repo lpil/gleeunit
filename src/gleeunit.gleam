@@ -65,7 +65,7 @@ if erlang {
     let result =
       test_module_files
       |> list.map(fn(test_module_file: String) {
-        assert Ok(#(_test_prefix, test_module_file)) =
+        let assert Ok(#(_test_prefix, test_module_file)) =
           string.split_once(test_module_file, "test/")
         test_module_file
       })
@@ -139,7 +139,7 @@ if erlang {
   }
 
   external fn get_cwd() -> String =
-    "glacier_ffi" "get_cwd_as_binary"
+    "gleeunit_ffi" "get_cwd_as_binary"
 
   external fn file_exists(absolute_file_name: String) -> Bool =
     "filelib" "is_regular"
