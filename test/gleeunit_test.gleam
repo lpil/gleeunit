@@ -1,7 +1,7 @@
-import gleeunit
+import gleeunit.{Colored, Coverage, Profile}
 
 pub fn main() {
-  gleeunit.main()
+  gleeunit.main_with([Colored(True), Profile(True), Coverage(True)])
 }
 
 pub fn some_test() {

@@ -3,29 +3,17 @@
 %% @doc A listener/reporter for eunit that prints '.' for each
 %% success, 'F' for each failure, and 'E' for each error. It can also
 %% optionally summarize the failures at the end.
--compile({nowarn_unused_function, [insert/2, to_list/1, to_list/2, size/1]}).
 -module(gleeunit_progress).
--behaviour(eunit_listener).
--define(NOTEST, true).
+
 -include_lib("eunit/include/eunit.hrl").
+
+-behaviour(eunit_listener).
 
 -define(RED, "\e[0;31m").
 -define(GREEN, "\e[0;32m").
 -define(YELLOW, "\e[0;33m").
--define(WHITE, "\e[0;37m").
 -define(CYAN, "\e[0;36m").
 -define(RESET, "\e[0m").
-
--record(node,{
-          rank = 0    :: non_neg_integer(),
-          key         :: term(),
-          value       :: term(),
-          children = new() :: binomial_heap()
-        }).
-
--export_type([binomial_heap/0, heap_node/0]).
--type binomial_heap() :: [ heap_node() ].
--type heap_node() :: #node{}.
 
 %% eunit_listener callbacks
 -export([
@@ -38,110 +26,19 @@
          start/1
         ]).
 
-%% -- binomial_heap.erl content start --
+-import(gleeunit_binomial_heap, [new/0]).
 
 -record(state, {
-          status = dict:new() :: euf_dict(),
-          failures = []       :: [[pos_integer()]],
-          skips = []          :: [[pos_integer()]],
-          timings = new()     :: binomial_heap(),
-          colored = true      :: boolean(),
-          profile = false     :: boolean()
+          status = #{}     :: euf_dict(),
+          failures = []    :: [[pos_integer()]],
+          skips = []       :: [[pos_integer()]],
+          timings = new()  :: gleeunit_binomial_heap:binomial_heap(),
+          colored = true   :: boolean(),
+          profile = false  :: boolean(),
+          coverage = false :: boolean()
         }).
 
--type euf_dict() :: dict:dict().
-
--spec new() -> binomial_heap().
-new() ->
-    [].
-
-% Inserts a new pair into the heap (or creates a new heap)
--spec insert(term(), term()) -> binomial_heap().
-insert(Key,Value) ->
-    insert(Key,Value,[]).
-
--spec insert(term(), term(), binomial_heap()) -> binomial_heap().
-insert(Key,Value,Forest) ->
-    insTree(#node{key=Key,value=Value},Forest).
-
-% Merges two heaps
--spec merge(binomial_heap(), binomial_heap()) -> binomial_heap().
-merge(TS1,[]) when is_list(TS1) -> TS1;
-merge([],TS2) when is_list(TS2) -> TS2;
-merge([#node{rank=R1}=T1|TS1]=F1,[#node{rank=R2}=T2|TS2]=F2) ->
-    if
-        R1 < R2 ->
-            [T1 | merge(TS1,F2)];
-        R2 < R1 ->
-            [T2 | merge(F1, TS2)];
-        true ->
-            insTree(link(T1,T2),merge(TS1,TS2))
-    end.
-
-% Deletes the top entry from the heap and returns it
--spec delete(binomial_heap()) -> {{term(), term()}, binomial_heap()}.
-delete(TS) ->
-    {#node{key=Key,value=Value,children=TS1},TS2} = getMin(TS),
-    {{Key,Value},merge(lists:reverse(TS1),TS2)}.
-
-% Turns the heap into list in heap order
--spec to_list(binomial_heap()) -> [{term(), term()}].
-to_list([]) -> [];
-to_list(List) when is_list(List) ->
-    to_list([],List).
-to_list(Acc, []) ->
-    lists:reverse(Acc);
-to_list(Acc,Forest) ->
-    {Next, Trees} = delete(Forest),
-    to_list([Next|Acc], Trees).
-
-% Take N elements from the top of the heap
--spec take(non_neg_integer(), binomial_heap()) -> [{term(), term()}].
-take(N,Trees) when is_integer(N), is_list(Trees) ->
-    take(N,Trees,[]).
-take(0,_Trees,Acc) ->
-    lists:reverse(Acc);
-take(_N,[],Acc)->
-    lists:reverse(Acc);
-take(N,Trees,Acc) ->
-    {Top,T2} = delete(Trees),
-    take(N-1,T2,[Top|Acc]).
-
-% Get an estimate of the size based on the binomial property
--spec size(binomial_heap()) -> non_neg_integer().
-size(Forest) ->
-    erlang:trunc(lists:sum([math:pow(2,R) || #node{rank=R} <- Forest])).
-
-%% Private API
--spec link(heap_node(), heap_node()) -> heap_node().
-link(#node{rank=R,key=X1,children=C1}=T1,#node{key=X2,children=C2}=T2) ->
-    case X1 < X2 of
-        true ->
-            T1#node{rank=R+1,children=[T2|C1]};
-        _ ->
-            T2#node{rank=R+1,children=[T1|C2]}
-    end.
-
-insTree(Tree, []) ->
-    [Tree];
-insTree(#node{rank=R1}=T1, [#node{rank=R2}=T2|Rest] = TS) ->
-    case R1 < R2 of
-        true ->
-            [T1|TS];
-        _ ->
-            insTree(link(T1,T2),Rest)
-    end.
-
-getMin([T]) ->
-    {T,[]};
-getMin([#node{key=K} = T|TS]) ->
-    {#node{key=K1} = T1,TS1} = getMin(TS),
-    case K < K1 of
-        true -> {T,TS};
-        _ -> {T1,[T|TS1]}
-    end.
-
-%% -- binomial_heap.erl content end --
+-type euf_dict() :: #{}.
 
 %% Startup
 start() ->
@@ -154,30 +51,37 @@ start(Options) ->
 %% eunit_listener callbacks
 %%------------------------------------------
 init(Options) ->
-    #state{colored=proplists:get_bool(colored, Options),
-           profile=proplists:get_bool(profile, Options)}.
+    Coverage =
+        case proplists:get_value(cover, Options, false) of
+            true -> cover:start(), true;
+            false -> false
+        end,
+
+    #state{colored = proplists:get_bool(colored, Options),
+           profile = proplists:get_bool(profile, Options),
+           coverage = Coverage}.
 
 handle_begin(group, Data, St) ->
     GID = proplists:get_value(id, Data),
-    Dict = St#state.status,
-    St#state{status=dict:store(GID, orddict:from_list([{type, group}|Data]), Dict)};
+    Map = St#state.status,
+    St#state{status = maps:put(GID, maps:from_list([{type, group} | Data]), Map)};
 handle_begin(test, Data, St) ->
     TID = proplists:get_value(id, Data),
-    Dict = St#state.status,
-    St#state{status=dict:store(TID, orddict:from_list([{type, test}|Data]), Dict)}.
+    Map = St#state.status,
+    St#state{status = maps:put(TID, maps:from_list([{type, test} | Data]), Map)}.
 
 handle_end(group, Data, St) ->
-    St#state{status=merge_on_end(Data, St#state.status)};
+    St#state{status = merge_on_end(Data, St#state.status)};
 handle_end(test, Data, St) ->
     NewStatus = merge_on_end(Data, St#state.status),
     St1 = print_progress(Data, St),
     St2 = record_timing(Data, St1),
-    St2#state{status=NewStatus}.
+    St2#state{status = NewStatus}.
 
-handle_cancel(_, Data, #state{status=Status, skips=Skips}=St) ->
+handle_cancel(_, Data, #state{status = Status, skips = Skips} = St) ->
     Status1 = merge_on_end(Data, Status),
     ID = proplists:get_value(id, Data),
-    St#state{status=Status1, skips=[ID|Skips]}.
+    St#state{status = Status1, skips = [ID | Skips]}.
 
 terminate({ok, Data}, St) ->
     print_failures(St),
@@ -185,6 +89,7 @@ terminate({ok, Data}, St) ->
     print_profile(St),
     print_timing(St),
     print_results(Data, St);
+
 terminate({error, Reason}, St) ->
     io:nl(), io:nl(),
     print_colored(io_lib:format("Eunit failed: ~25p~n", [Reason]), ?RED, St),
@@ -208,20 +113,20 @@ print_progress(Data, St) ->
             St;
         {skipped, _Reason} ->
             print_progress_skipped(St),
-            St#state{skips=[TID|St#state.skips]};
+            St#state{skips = [TID | St#state.skips]};
         {error, Exception} ->
             print_progress_failed(Exception, St),
-            St#state{failures=[TID|St#state.failures]}
+            St#state{failures = [TID | St#state.failures]}
     end.
 
-record_timing(Data, State=#state{timings=T, profile=true}) ->
+record_timing(Data, State = #state{timings = T, profile = true}) ->
     TID = proplists:get_value(id, Data),
     case lists:keyfind(time, 1, Data) of
         {time, Int} ->
             %% It's a min-heap, so we insert negative numbers instead
-            %% of the actuals and normalize when we report on them.
-            T1 = insert(-Int, TID, T),
-            State#state{timings=T1};
+            %% of the actual and normalize when we report on them.
+            T1 = gleeunit_binomial_heap:insert(-Int, TID, T),
+            State#state{timings = T1};
         false ->
             State
     end;
@@ -237,12 +142,9 @@ print_progress_skipped(St) ->
 print_progress_failed(_Exc, St) ->
     print_colored("F", ?RED, St).
 
-merge_on_end(Data, Dict) ->
-    ID = proplists:get_value(id, Data),
-    dict:update(ID,
-                fun(Old) ->
-                        orddict:merge(fun merge_data/3, Old, orddict:from_list(Data))
-                end, Dict).
+merge_on_end(Data, Map) ->
+    Value = #{id := ID} = maps:from_list(Data),
+    maps:update_with(ID, fun(Old) -> maps:merge_with(fun merge_data/3, Old, Value) end, Value, Map).
 
 merge_data(_K, undefined, X) -> X;
 merge_data(_K, X, undefined) -> X;
@@ -251,22 +153,19 @@ merge_data(_K, _, X) -> X.
 %%------------------------------------------
 %% Print information at end of run
 %%------------------------------------------
-print_failures(#state{failures=[]}) ->
-    ok;
-print_failures(#state{failures=Fails}=State) ->
+print_failures(#state{failures = []}) -> ok;
+print_failures(#state{failures = Fails} = State) ->
     io:nl(),
     io:fwrite("Failures:~n",[]),
     lists:foldr(print_failure_fun(State), 1, Fails),
     ok.
 
-print_failure_fun(#state{status=Status}=State) ->
+print_failure_fun(#state{status = Status} = State) ->
     fun(Key, Count) ->
-            TestData = dict:fetch(Key, Status),
+            TestData = #{status := DataStatus, output := DataOutput} = maps:get(Key, Status),
             TestId = format_test_identifier(TestData),
             io:fwrite("~n  ~p) ~ts~n", [Count, TestId]),
-            print_failure_reason(proplists:get_value(status, TestData),
-                                 proplists:get_value(output, TestData),
-                                 State),
+            print_failure_reason(DataStatus, DataOutput, State),
             io:nl(),
             Count + 1
     end.
@@ -355,14 +254,14 @@ print_assertion_failure({Type, Props}, State) ->
     print_colored(FailureDesc, ?RED, State),
     io:nl().
 
-print_pending(#state{skips=[]}) ->
+print_pending(#state{skips = []}) ->
     ok;
-print_pending(#state{status=Status, skips=Skips}=State) ->
+print_pending(#state{status = Status, skips = Skips} = State) ->
     io:nl(),
     io:fwrite("Pending:~n", []),
     lists:foreach(fun(ID) ->
-                          Info = dict:fetch(ID, Status),
-                          case proplists:get_value(reason, Info) of
+                          Info = maps:get(ID, Status),
+                          case maps:get(reason, Info, undefined) of
                               undefined ->
                                   ok;
                               Reason ->
@@ -371,10 +270,10 @@ print_pending(#state{status=Status, skips=Skips}=State) ->
                   end, lists:reverse(Skips)),
     io:nl().
 
-print_pending_reason(Reason0, Data, State) ->
-    Text = case proplists:get_value(type, Data) of
+print_pending_reason(Reason0, #{type := Type} = Data, State) ->
+    Text = case Type of
                group ->
-                   io_lib:format("  ~ts~n", [proplists:get_value(desc, Data)]);
+                   io_lib:format("  ~ts~n", [maps:get(desc, Data)]);
                test ->
                    io_lib:format("  ~ts~n", [format_test_identifier(Data)])
            end,
@@ -382,11 +281,9 @@ print_pending_reason(Reason0, Data, State) ->
     print_colored(Text, ?YELLOW, State),
     print_colored(Reason, ?CYAN, State).
 
-print_profile(#state{timings=T, status=Status, profile=true}=State) ->
-    TopN = take(10, T),
+print_profile(#state{timings = T, status = #{ [] := #{time := TotalTime} }, profile = true} = State) ->
+    TopN = gleeunit_binomial_heap:take(10, T),
     TopNTime = abs(lists:sum([ Time || {Time, _} <- TopN ])),
-    TLG = dict:fetch([], Status),
-    TotalTime = proplists:get_value(time, TLG),
     if TotalTime =/= undefined andalso TotalTime > 0 andalso TopN =/= [] ->
             TopNPct = (TopNTime / TotalTime) * 100,
             io:nl(), io:nl(),
@@ -395,12 +292,10 @@ print_profile(#state{timings=T, status=Status, profile=true}=State) ->
             io:nl();
        true -> ok
     end;
-print_profile(#state{profile=false}) ->
+print_profile(#state{profile = false}) ->
     ok.
 
-print_timing(#state{status=Status}) ->
-    TLG = dict:fetch([], Status),
-    Time = proplists:get_value(time, TLG),
+print_timing(#state{status = #{ [] := #{time := Time} }}) ->
     io:nl(),
     io:fwrite("Finished in ~ts~n", [format_time(Time)]),
     ok.
@@ -427,9 +322,9 @@ print_results(Color, Total, Fail, Skip, Cancel, State) ->
     Text = io_lib:format("~p tests, ~p failures~ts~ts~n", [Total, Fail, SkipText, CancelText]),
     print_colored(Text, Color, State).
 
-print_timing_fun(#state{status=Status}=State) ->
+print_timing_fun(#state{status = Status} = State) ->
     fun({Time, Key}) ->
-            TestData = dict:fetch(Key, Status),
+            TestData = maps:get(Key, Status),
             TestId = format_test_identifier(TestData),
             io:nl(),
             io:fwrite("  ~ts~n", [TestId]),
@@ -440,9 +335,9 @@ print_timing_fun(#state{status=Status}=State) ->
 %% Print to the console with the given color
 %% if enabled.
 %%------------------------------------------
-print_colored(Text, Color, #state{colored=true}) ->
+print_colored(Text, Color, #state{colored = true}) ->
     io:fwrite("~s~ts~s", [Color, Text, ?RESET]);
-print_colored(Text, _Color, #state{colored=false}) ->
+print_colored(Text, _Color, #state{colored = false}) ->
     io:fwrite("~ts", [Text]).
 
 %%------------------------------------------
@@ -457,13 +352,12 @@ format_optional_result(0, _) ->
 format_optional_result(Count, Text) ->
     io_lib:format(", ~p ~ts", [Count, Text]).
 
-format_test_identifier(Data) ->
-    {Mod, Fun, _} = proplists:get_value(source, Data),
-    Line = case proplists:get_value(line, Data) of
+format_test_identifier(#{source := {Mod, Fun, _}} = Data) when is_map(Data) ->
+    Line = case maps:get(line, Data, 0) of
                0 -> "";
                L -> io_lib:format(":~p", [L])
            end,
-    Desc = case proplists:get_value(desc, Data) of
+    Desc = case maps:get(desc, Data, undefined) of
                undefined ->  "";
                DescText -> io_lib:format(": ~ts", [DescText])
            end,
@@ -477,7 +371,7 @@ format_time(Time) ->
 format_pending_reason({module_not_found, M}) ->
     M1 = gleam_format_module_name(M),
     io_lib:format("Module '~ts' missing", [M1]);
-format_pending_reason({no_such_function, {M,F,_}}) ->
+format_pending_reason({no_such_function, {M, F, _}}) ->
     M1 = gleam_format_module_name(M),
     io_lib:format("Function ~ts undefined", [format_function_name(M1,F)]);
 format_pending_reason({exit, Reason}) ->
