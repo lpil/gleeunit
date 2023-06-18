@@ -31,7 +31,7 @@ will be found and run as a test.
 
 ```gleam
 pub fn the_universe_test() {
-  assert 1 = 1
+  let assert 1 = 1
 }
 ```
 
