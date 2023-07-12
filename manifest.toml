@@ -2,8 +2,8 @@
 # You typically do not need to edit this file
 
 packages = [
-  { name = "gleam_stdlib", version = "0.27.0", build_tools = ["gleam"], requirements = [], otp_app = "gleam_stdlib", source = "hex", outer_checksum = "9DBDD21B48C654182CDD8AA15ACF85E8E74A0438583C68BD7EF08BE89F999C6F" },
+  { name = "gleam_stdlib", version = "0.29.2", build_tools = ["gleam"], requirements = [], otp_app = "gleam_stdlib", source = "hex", outer_checksum = "B296BF9B8AA384A6B64CD49F333016A9DCA6AC73A95400D17F2271E072EFF986" },
 ]
 
 [requirements]
-gleam_stdlib = "~> 0.27"
+gleam_stdlib = { version = "~> 0.29.2" }
