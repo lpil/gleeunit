@@ -8,7 +8,7 @@ description = "Gleam bindings to Erlang's EUnit test framework. This is a fork o
 allow_read = ["./"]
 
 [dependencies]
-gleam_stdlib = "~> 0.27"
+gleam_stdlib = "~> 0.29"
 gleam_erlang = "~> 0.18"
 
 [dev-dependencies]

@@ -15,26 +15,28 @@ pub fn some_other_test() {
   let assert 1 = 1 - 0
 }
 
-if erlang {
-  import gleam/erlang
+@target(erlang)
+import gleam/erlang
 
-  fn start_args() -> List(String) {
-    erlang.start_arguments()
-  }
+@target(erlang)
+fn start_args() -> List(String) {
+  erlang.start_arguments()
 }
 
-if javascript {
-  import gleam/list
-  import gleam/string
+@target(javascript)
+import gleam/list
+@target(javascript)
+import gleam/string
 
-  fn start_args() -> List(String) {
-    do_start_args()
-    // This is a work around around a bug introduced in 0.26.0:
-    |> list.filter(fn(arg) {
-      arg != "--" && string.ends_with(arg, "/gleam.main.mjs") == False
-    })
-  }
-
-  external fn do_start_args() -> List(String) =
-    "./gleeunit_ffi.mjs" "start_args"
+@target(javascript)
+fn start_args() -> List(String) {
+  do_start_args()
+  // This is a work around around a bug introduced in 0.26.0:
+  |> list.filter(fn(arg) {
+    arg != "--" && string.ends_with(arg, "/gleam.main.mjs") == False
+  })
 }
+
+@target(javascript)
+@external(javascript, "./gleeunit_ffi.mjs", "start_args")
+fn do_start_args() -> List(String)
