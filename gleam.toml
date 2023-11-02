@@ -1,5 +1,5 @@
 name = "gleeunit"
-version = "0.11.0"
+version = "1.0.0"
 licences = ["Apache-2.0"]
 description = "Gleam bindings to Erlang's EUnit test framework"
 gleam = ">= 0.32.0"
@@ -15,4 +15,3 @@ allow_read = [
 gleam_stdlib = "~> 0.32"
 
 [dev-dependencies]
-# some_test_package = "~> 1.0.0"
