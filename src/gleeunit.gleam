@@ -21,7 +21,7 @@ import gleam/result
 @target(erlang)
 import gleam/string
 @target(erlang)
-import gleam/dynamic.{Dynamic}
+import gleam/dynamic.{type Dynamic}
 
 @target(erlang)
 fn do_main() -> Nil {

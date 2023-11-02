@@ -2,6 +2,7 @@ name = "gleeunit"
 version = "0.11.0"
 licences = ["Apache-2.0"]
 description = "Gleam bindings to Erlang's EUnit test framework"
+gleam = ">= 0.32.0"
 
 [javascript.deno]
 allow_read = [
@@ -11,7 +12,7 @@ allow_read = [
 ]
 
 [dependencies]
-gleam_stdlib = "~> 0.27"
+gleam_stdlib = "~> 0.32"
 
 [dev-dependencies]
 # some_test_package = "~> 1.0.0"
