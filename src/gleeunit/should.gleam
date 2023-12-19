@@ -4,13 +4,7 @@
 //// More information on running eunit can be found in [the rebar3
 //// documentation](https://rebar3.org/docs/testing/eunit/).
 
-
-
-
-
 import gleam/string
-
-
 
 @external(erlang, "gleeunit_ffi", "should_equal")
 pub fn equal(a: t, b: t) -> Nil {
