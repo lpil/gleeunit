@@ -1,8 +1,8 @@
 name = "gleeunit"
-version = "1.0.1"
+version = "1.0.2"
 licences = ["Apache-2.0"]
 description = "Gleam bindings to Erlang's EUnit test framework"
-gleam = ">= 0.32.0"
+gleam = ">= 0.33.0"
 
 [javascript.deno]
 allow_read = [

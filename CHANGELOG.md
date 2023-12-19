@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.2 - 2023-12-19
+
+- Added Gleam v0.33.0 version requirement.
+
 ## v1.0.1 - 2023-12-19
 
 - Updated for Gleam v0.33.0.
