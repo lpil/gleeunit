@@ -5,6 +5,7 @@
 //// documentation](https://rebar3.org/docs/testing/eunit/).
 
 import gleam/string
+import gleam/option.{type Option, None, Some}
 
 @external(erlang, "gleeunit_ffi", "should_equal")
 pub fn equal(a: t, b: t) -> Nil {
@@ -47,6 +48,20 @@ pub fn be_error(a: Result(a, e)) -> e {
   case a {
     Error(error) -> error
     _ -> panic as string.concat(["\n", string.inspect(a), "\nshould be error"])
+  }
+}
+
+pub fn be_some(a: Option(a)) -> a {
+  case a {
+    Some(value) -> value
+    _ -> panic as string.concat(["\n", string.inspect(a), "\nshould be some"])
+  }
+}
+
+pub fn be_none(a: Option(a)) -> Nil {
+  case a {
+    None -> Nil
+    _ -> panic as string.concat(["\n", string.inspect(a), "\nshould be none"])
   }
 }
 
