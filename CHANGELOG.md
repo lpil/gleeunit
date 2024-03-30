@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.0
+
+- Added `Option` assertions: `should.be_some` and `should.be_none`
+
 ## v1.0.2 - 2023-12-19
 
 - Added Gleam v0.33.0 version requirement.
