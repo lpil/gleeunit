@@ -1,5 +1,5 @@
 name = "gleeunit"
-version = "1.0.2"
+version = "1.1.2"
 licences = ["Apache-2.0"]
 description = "Gleam bindings to Erlang's EUnit test framework"
 gleam = ">= 0.33.0"
