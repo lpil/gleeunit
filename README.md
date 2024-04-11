@@ -1,60 +1,37 @@
-# glacier_gleeunit
+# Glacier's Gleeunit
 
-**This is a fork of [*Gleeunit*](https://hex.pm/packages/gleeunit) that allows it to be called as a library/function with a list of test modules instead of just via CLI.**
+This is a fork of [Gleeunit](https://hex.pm/packages/gleeunit) that allows
+Gleeunit to be both called:
 
-**This is a dependency of [*Glacier*](https://hex.pm/packages/glacier).**
+1. with one or many given Gleam test modules instead of running all of them.
+2. as a library function with a list of test modules instead of just
+   via `gleam test` CLI.
 
-**DO NOT install *Gleeunit* and this fork side by side in the same project.**
+The combination of both allows unit tests to be executed from glacier which
+figures out which test modules to run.
 
-* * *
+As a side effect you can run single test modules with `glacier_gleeunit` from
+the CLI.
 
-Gleam bindings to the Erlang EUnit test framework.
+**This is a dependency of [Glacier](https://hex.pm/packages/glacier).**
 
-A custom test runner is included for when compiled to JavaScript running on
-either NodeJS or Deno.
+**DO NOT install `gleeunit` and `glacier_gleeunit` side by side in the same project.**
 
-Documentation is available on [HexDocs](https://hexdocs.pm/glacier_gleeunit/index.html).
+- `glacier_gleeunit` is meant as a straightforward replacement for `gleeunit`.
+- `glacier_gleeunit` tries to stay up to date with `gleeunit` upstream,
+   back-porting any changes made there.
+- As a consequence `glacier_gleeunit` uses the same Gleam module files and thus
+  the modules would collide if both are installed.
 
 ## Usage
 
-Add this package to your Gleam project.
+Remove `gleeunit` and add this package to your Gleam project.
 
-```sh
+```shell
+gleam remove gleeunit
 gleam add glacier_gleeunit --dev
 ```
 
-And then call the `gleeunit.main` function from your test main function.
+* * *
 
-```gleam
-// In test/yourapp_test.gleam
-import gleeunit
-
-pub fn main() {
-  gleeunit.main()
-}
-```
-
-Now any public function with a name ending in `_test` in the `test` directory
-will be found and run as a test.
-
-```gleam
-pub fn the_universe_test() {
-  let assert 1 = 1
-}
-```
-
-Run the tests by entering `gleam test` in the command line.
-
-### Deno
-
-If using the Deno JavaScript runtime, you will need to add the following to your
-`gleam.toml`.
-
-```toml
-[javascript.deno]
-allow_read = [
-  "gleam.toml",
-  "test",
-  "build",
-]
-```
+For further usage instructions, see [gleeunit's README.md](./README.me).
