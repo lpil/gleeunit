@@ -9,6 +9,5 @@ allow_read = ["./"]
 
 [dependencies]
 gleam_stdlib = "~> 0.36 or ~> 1.0"
-gleam_erlang = "~> 0.25"
 argv = "~> 1.0"
 
