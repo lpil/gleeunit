@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.11.40 - 2024-04-11
+
+- Remove now unused dep gleam/erlang.
+
 ## v0.11.30 - 2024-04-11
 
 - Updates for Gleam 1.0 to be used by Glacier 0.9 or later.
