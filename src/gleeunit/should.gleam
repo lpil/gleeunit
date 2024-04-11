@@ -4,74 +4,64 @@
 //// More information on running eunit can be found in [the rebar3
 //// documentation](https://rebar3.org/docs/testing/eunit/).
 
-@target(erlang)
-@external(erlang, "gleeunit_ffi", "should_equal")
-pub fn equal(a: a, b: a) -> Nil
-
-@target(erlang)
-@external(erlang, "gleeunit_ffi", "should_not_equal")
-pub fn not_equal(a: a, b: a) -> Nil
-
-@target(erlang)
-@external(erlang, "gleeunit_ffi", "should_be_ok")
-pub fn be_ok(a: Result(a, b)) -> a
-
-@target(erlang)
-@external(erlang, "gleeunit_ffi", "should_be_error")
-pub fn be_error(a: Result(a, b)) -> b
-
-@target(javascript)
 import gleam/string
+import gleam/option.{type Option, None, Some}
 
-@target(javascript)
-@external(javascript, "../gleam.mjs", "inspect")
-fn stringify(a: anything) -> String
-
-@target(javascript)
-@external(javascript, "../gleeunit_ffi.mjs", "crash")
-fn crash(a: String) -> anything
-
-@target(javascript)
-pub fn equal(a, b) {
+@external(erlang, "gleeunit_ffi", "should_equal")
+pub fn equal(a: t, b: t) -> Nil {
   case a == b {
     True -> Nil
     _ ->
-      crash(string.concat([
+      panic as string.concat([
         "\n\t",
-        stringify(a),
+        string.inspect(a),
         "\n\tshould equal \n\t",
-        stringify(b),
-      ]))
+        string.inspect(b),
+      ])
   }
 }
 
-@target(javascript)
-pub fn not_equal(a, b) {
+@external(erlang, "gleeunit_ffi", "should_not_equal")
+pub fn not_equal(a: t, b: t) -> Nil {
   case a != b {
     True -> Nil
     _ ->
-      crash(string.concat([
+      panic as string.concat([
         "\n",
-        stringify(a),
+        string.inspect(a),
         "\nshould not equal \n",
-        stringify(b),
-      ]))
+        string.inspect(b),
+      ])
   }
 }
 
-@target(javascript)
-pub fn be_ok(a) {
+@external(erlang, "gleeunit_ffi", "should_be_ok")
+pub fn be_ok(a: Result(a, e)) -> a {
   case a {
     Ok(value) -> value
-    _ -> crash(string.concat(["\n", stringify(a), "\nshould be ok"]))
+    _ -> panic as string.concat(["\n", string.inspect(a), "\nshould be ok"])
   }
 }
 
-@target(javascript)
-pub fn be_error(a) {
+@external(erlang, "gleeunit_ffi", "should_be_error")
+pub fn be_error(a: Result(a, e)) -> e {
   case a {
     Error(error) -> error
-    _ -> crash(string.concat(["\n", stringify(a), "\nshould be error"]))
+    _ -> panic as string.concat(["\n", string.inspect(a), "\nshould be error"])
+  }
+}
+
+pub fn be_some(a: Option(a)) -> a {
+  case a {
+    Some(value) -> value
+    _ -> panic as string.concat(["\n", string.inspect(a), "\nshould be some"])
+  }
+}
+
+pub fn be_none(a: Option(a)) -> Nil {
+  case a {
+    None -> Nil
+    _ -> panic as string.concat(["\n", string.inspect(a), "\nshould be none"])
   }
 }
 

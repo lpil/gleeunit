@@ -33,7 +33,8 @@ fn find_matching_test_module_files(test_module_files) {
   test_module_files
   |> list.filter(fn(module_name) {
     module_name
-    |> string.ends_with(".gleam") == True
+    |> string.ends_with(".gleam")
+    == True
   })
   |> list.filter(fn(module_name) {
     let absolute_module_file_name = get_cwd() <> "/" <> module_name
@@ -52,7 +53,7 @@ fn find_matching_test_module_files(test_module_files) {
 }
 
 @target(erlang)
-import gleam/dynamic.{Dynamic}
+import gleam/dynamic.{type Dynamic}
 @target(erlang)
 import gleam/int
 @target(erlang)
@@ -177,4 +178,7 @@ fn run_suite(
 
 @target(javascript)
 @external(javascript, "./gleeunit_ffi.mjs", "main")
-fn run_suite_ffi(test_modules test_modules: List(String), halts_on_error halts_on_error: Bool) -> Nil
+fn run_suite_ffi(
+  test_modules test_modules: List(String),
+  halts_on_error halts_on_error: Bool,
+) -> Nil

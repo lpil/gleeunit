@@ -16,11 +16,11 @@ pub fn some_other_test() {
 }
 
 @target(erlang)
-import gleam/erlang
+import argv
 
 @target(erlang)
 fn start_args() -> List(String) {
-  erlang.start_arguments()
+  argv.load().arguments
 }
 
 @target(javascript)
@@ -31,10 +31,10 @@ import gleam/string
 @target(javascript)
 fn start_args() -> List(String) {
   do_start_args()
-  // This is a work around around a bug introduced in 0.26.0:
-  |> list.filter(fn(arg) {
-    arg != "--" && string.ends_with(arg, "/gleam.main.mjs") == False
-  })
+  // // This is a work around around a bug introduced in 0.26.0:
+  // |> list.filter(fn(arg) {
+  //   arg != "--" && string.ends_with(arg, "/gleam.main.mjs") == False
+  // })
 }
 
 @target(javascript)

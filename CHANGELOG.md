@@ -1,16 +1,20 @@
 # Changelog
 
-## v0.11.10
+## v0.11.30 - 2024-04-11
 
-- Merge with gleeunit main
+- Updates for Gleam 1.0 to be used by Glacier 0.9 or later.
 
-## v0.11.0 - Unreleased
+## v0.11.10 - 2023-03-05
 
-- Dependency upgrade and code fixes to be in line with 0.27.0
+- Merge with gleeunit main.
+
+## v0.11.0 - 2023-03-03
+
+- Dependency upgrade and code fixes to be in line with 0.27.0.
 
 ## v0.10.12-glacier - 2023-01-31
 
-- Attempt to fix deno testing on Glacier
+- Attempt to fix Deno testing on Glacier.
 
 ## v0.10.1 - 2023-01-23
 
