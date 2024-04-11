@@ -1,6 +1,8 @@
-import gleam/io
-import gleam/list
 import gleam/function
+import gleam/io
+@target(javascript)
+import gleam/list
+@target(javascript)
 import gleam/string
 
 /// Find and run all test functions for the current project using Erlang's EUnit
@@ -16,48 +18,21 @@ pub fn main() -> Nil {
   |> run_suite(halts_on_error: True)
 }
 
-/// Similar to `main()` but meant to be called as a function not from cli:
-/// - Allows to specificy a list of test modules
-/// - Allows customization of the halt behavior
-///
-pub fn run(
-  test_module_files: List(String),
-  halts_on_error halts_on_error: Bool,
-) -> Nil {
-  test_module_files
-  |> find_matching_test_module_files
-  |> run_suite(halts_on_error)
-}
-
-fn find_matching_test_module_files(test_module_files) {
-  test_module_files
-  |> list.filter(fn(module_name) {
-    module_name
-    |> string.ends_with(".gleam")
-    == True
-  })
-  |> list.filter(fn(module_name) {
-    let absolute_module_file_name = get_cwd() <> "/" <> module_name
-
-    file_exists(absolute_module_file_name)
-    |> function.tap(fn(exists) {
-      case exists {
-        True -> Nil
-        False ->
-          io.println_error(
-            "Error: Could not find " <> absolute_module_file_name,
-          )
-      }
-    })
-  })
+@target(javascript)
+fn detect_all_test_modules() -> List(String) {
+  find_files(".gleam", in: "test")
 }
 
 @target(erlang)
-import gleam/dynamic.{type Dynamic}
+fn detect_all_test_modules() -> List(String) {
+  find_files("**/*.{erl,gleam}", in: "test")
+  |> list.map(fn(test_module_file_name: String) {
+    "test/" <> test_module_file_name
+  })
+}
+
 @target(erlang)
 import gleam/int
-@target(erlang)
-import gleam/result
 
 @target(erlang)
 fn run_suite(
@@ -96,6 +71,104 @@ fn run_suite(
     }
   }
 }
+
+@target(javascript)
+fn run_suite(
+  test_modules: List(String),
+  halts_on_error halts_on_error: Bool,
+) -> Nil {
+  find_matching_test_module_files(test_modules)
+  |> run_suite_ffi(halts_on_error)
+}
+
+@target(javascript)
+@external(javascript, "./gleeunit_ffi.mjs", "main")
+fn run_suite_ffi(
+  test_modules test_modules: List(String),
+  halts_on_error halts_on_error: Bool,
+) -> Nil
+
+/// Similar to `main()` but meant to be called as a function not from cli:
+/// - Allows to specificy a list of test modules
+/// - Allows customization of the halt behavior
+///
+pub fn run(
+  test_module_files: List(String),
+  halts_on_error halts_on_error: Bool,
+) -> Nil {
+  test_module_files
+  |> find_matching_test_module_files
+  |> run_suite(halts_on_error)
+}
+
+fn find_matching_test_module_files(test_module_files) {
+  test_module_files
+  |> list.filter(fn(module_name) {
+    module_name
+    |> string.ends_with(".gleam")
+    == True
+  })
+  |> list.filter(fn(module_name) {
+    let absolute_module_file_name = get_cwd() <> "/" <> module_name
+
+    file_exists(absolute_module_file_name)
+    |> function.tap(fn(exists) {
+      case exists {
+        True -> Nil
+        False ->
+          io.println_error(
+            "Error: Could not find " <> absolute_module_file_name,
+          )
+      }
+    })
+  })
+}
+
+@external(erlang, "gleeunit_ffi", "get_cwd_as_binary")
+@external(javascript, "./gleeunit_ffi.mjs", "cwd")
+fn get_cwd() -> String
+
+@external(erlang, "filelib", "is_regular")
+@external(javascript, "./gleeunit_ffi.mjs", "file_exists")
+fn file_exists(absolute_file_name absolute_file_name: String) -> Bool
+
+// Vanilla gleeunit below, mostly
+
+// We do not need this from gleeunit anymore as `run()` covers that.
+//
+// @target(javascript)
+// @external(javascript, "./gleeunit_ffi.mjs", "main")
+// fn do_main() -> Nil
+
+@target(erlang)
+import gleam/list
+@target(erlang)
+import gleam/result
+@target(erlang)
+import gleam/string
+@target(erlang)
+import gleam/dynamic.{type Dynamic}
+
+// We do not need this anymore as `run()` covers that.
+//
+// @target(erlang)
+// fn do_main() -> Nil {
+//   let options = [Verbose, NoTty, Report(#(GleeunitProgress, [Colored(True)]))]
+
+//   let result =
+//     find_files(matching: "**/*.{erl,gleam}", in: "test")
+//     |> list.map(gleam_to_erlang_module_name)
+//     |> list.map(dangerously_convert_string_to_atom(_, Utf8))
+//     |> run_eunit(options)
+//     |> dynamic.result(dynamic.dynamic, dynamic.dynamic)
+//     |> result.unwrap(Error(dynamic.from(Nil)))
+
+//   let code = case result {
+//     Ok(_) -> 0
+//     Error(_) -> 1
+//   }
+//   halt(code)
+// }
 
 @target(erlang)
 @external(erlang, "erlang", "halt")
@@ -145,40 +218,3 @@ type EunitOption {
 @target(erlang)
 @external(erlang, "eunit", "test")
 fn run_eunit(a: List(Atom), b: List(EunitOption)) -> Dynamic
-
-@target(erlang)
-fn detect_all_test_modules() -> List(String) {
-  find_files("**/*.{erl,gleam}", in: "test")
-  |> list.map(fn(test_module_file_name: String) {
-    "test/" <> test_module_file_name
-  })
-}
-
-@external(erlang, "gleeunit_ffi", "get_cwd_as_binary")
-@external(javascript, "./gleeunit_ffi.mjs", "cwd")
-fn get_cwd() -> String
-
-@external(erlang, "filelib", "is_regular")
-@external(javascript, "./gleeunit_ffi.mjs", "file_exists")
-fn file_exists(absolute_file_name absolute_file_name: String) -> Bool
-
-@target(javascript)
-fn detect_all_test_modules() -> List(String) {
-  find_files(".gleam", in: "test")
-}
-
-@target(javascript)
-fn run_suite(
-  test_modules: List(String),
-  halts_on_error halts_on_error: Bool,
-) -> Nil {
-  find_matching_test_module_files(test_modules)
-  |> run_suite_ffi(halts_on_error)
-}
-
-@target(javascript)
-@external(javascript, "./gleeunit_ffi.mjs", "main")
-fn run_suite_ffi(
-  test_modules test_modules: List(String),
-  halts_on_error halts_on_error: Bool,
-) -> Nil

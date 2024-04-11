@@ -8,4 +8,4 @@ packages = [
 
 [requirements]
 argv = { version = "~> 1.0" }
-gleam_stdlib = { version = "~> 0.36 or ~> 1.0" }
+gleam_stdlib = { version = ">= 0.36.0 and < 2.0.0" }

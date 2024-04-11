@@ -35,4 +35,4 @@ gleam add glacier_gleeunit --dev
 
 * * *
 
-For further usage instructions, see [gleeunit's README.md](./README.md).
+For further usage instructions, see [gleeunit's original README.md](./README_ORIGINAL_GLEEUNIT.md).
