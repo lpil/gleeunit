@@ -30,6 +30,7 @@ Remove `gleeunit` and add this package to your Gleam project.
 
 ```shell
 gleam remove gleeunit
+gleam clean
 gleam add glacier_gleeunit --dev
 ```
 
