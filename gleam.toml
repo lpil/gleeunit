@@ -4,7 +4,7 @@ name = "glacier_gleeunit"
 # means the version will be 1.1.3001, 1.1.3002 etc.
 version = "1.1.2001"
 licences = ["Apache-2.0"]
-description = "This is a fork of Gleeunit that allows it to be called as a library/function with a list of test modules instead of just via CLI."
+description = "This is a fork of gleeunit that allows it to be called as a library/function with a list of test modules instead of just via CLI."
 gleam = "~> 1.0"
 repository = { type = "github", user = "inoas", repo = "gleeunit" }
 links = [
