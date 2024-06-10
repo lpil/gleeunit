@@ -15,13 +15,13 @@ pub fn main() -> Nil {
 fn do_main() -> Nil
 
 @target(erlang)
+import gleam/dynamic.{type Dynamic}
+@target(erlang)
 import gleam/list
 @target(erlang)
 import gleam/result
 @target(erlang)
 import gleam/string
-@target(erlang)
-import gleam/dynamic.{type Dynamic}
 
 @target(erlang)
 fn do_main() -> Nil {

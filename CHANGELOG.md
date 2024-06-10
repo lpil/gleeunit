@@ -1,6 +1,10 @@
 # Changelog
 
-## v1.1.0
+## v1.1.3 - 2024-06-10
+
+- Fixed docs repo link by republishing to hex.pm.
+
+## v1.1.0 - 2024-03-30
 
 - Added `Option` assertions: `should.be_some` and `should.be_none`
 
