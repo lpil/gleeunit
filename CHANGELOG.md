@@ -1,10 +1,11 @@
 # Changelog
 
-## v1.1.3 - 2024-06-10
+## v1.2.0 - 2024-06-20
 
-- Fixed docs repo link by republishing to hex.pm.
+- The Gleam standard library version requirement has been relaxed to 
+  `>= 0.33.0 and < 2.0.0`.
 
-## v1.1.0 - 2024-03-30
+## v1.1.2 - 2024-03-30
 
 - Added `Option` assertions: `should.be_some` and `should.be_none`
 
