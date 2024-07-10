@@ -8,7 +8,7 @@ import gleam/string
 /// Find and run all test functions for the current project using Erlang's EUnit
 /// test framework.
 ///
-/// Any Erlang or Gleam function in the `test` directory with a name editing in
+/// Any Erlang or Gleam function in the `test` directory with a name ending in
 /// `_test` is considered a test function and will be run.
 ///
 /// If running on JavaScript tests will be run with a custom test runner.
@@ -141,13 +141,13 @@ fn file_exists(absolute_file_name absolute_file_name: String) -> Bool
 // fn do_main() -> Nil
 
 @target(erlang)
+import gleam/dynamic.{type Dynamic}
+@target(erlang)
 import gleam/list
 @target(erlang)
 import gleam/result
 @target(erlang)
 import gleam/string
-@target(erlang)
-import gleam/dynamic.{type Dynamic}
 
 // We do not need this anymore as `run()` covers that.
 //

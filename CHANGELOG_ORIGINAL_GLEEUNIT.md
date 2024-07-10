@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.2.0 - 2024-06-20
+
+- The Gleam standard library version requirement has been relaxed to
+  `>= 0.33.0 and < 2.0.0`.
+
 ## v1.1.0
 
 - Added `Option` assertions: `should.be_some` and `should.be_none`

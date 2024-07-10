@@ -1,5 +1,4 @@
 *.beam
 *.ez
 build
-
 .tool-versions

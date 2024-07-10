@@ -1,6 +1,8 @@
 # Changelog
 
-Also see [gleeunit's original CHANGELOG.md](./CHANGELOG_ORIGINAL_GLEEUNIT.md).
+## v1.2.001 - 2024-06-20
+
+- Merge in upstream gleeunit 1.2.0.
 
 ## v1.1.2001 - 2024-04-11
 
