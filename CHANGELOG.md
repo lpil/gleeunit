@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.2.001 - 2024-06-20
+## v1.2.1001 - 2024-06-20
 
 - Merge in upstream gleeunit 1.2.0.
 
