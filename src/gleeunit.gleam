@@ -1,6 +1,4 @@
-import gleam/dynamic.{type Dynamic}
 import gleam/list
-import gleam/result
 import gleam/string
 
 /// Find and run all test functions for the current project using Erlang's EUnit
@@ -24,8 +22,6 @@ fn do_main() -> Nil {
     |> list.map(gleam_to_erlang_module_name)
     |> list.map(dangerously_convert_string_to_atom(_, Utf8))
     |> run_eunit(options)
-    |> dynamic.result(dynamic.dynamic, dynamic.dynamic)
-    |> result.unwrap(Error(dynamic.from(Nil)))
 
   let code = case result {
     Ok(_) -> 0
@@ -70,5 +66,5 @@ type EunitOption {
   Report(#(ReportModuleName, List(GleeunitProgressOption)))
 }
 
-@external(erlang, "eunit", "test")
-fn run_eunit(a: List(Atom), b: List(EunitOption)) -> Dynamic
+@external(erlang, "gleeunit_ffi", "run_eunit")
+fn run_eunit(a: List(Atom), b: List(EunitOption)) -> Result(Nil, a)
