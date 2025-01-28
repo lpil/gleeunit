@@ -1,7 +1,7 @@
 -module(gleeunit_ffi).
 
 -export([find_files/2, should_equal/2, should_not_equal/2, should_be_ok/1,
-         should_be_error/1]).
+         should_be_error/1, run_eunit/2]).
 
 -include_lib("eunit/include/eunit.hrl").
 
@@ -22,3 +22,10 @@ should_be_ok(A) ->
 should_be_error(A) -> 
     ?assertMatch({error, _}, A),
     element(2, A).
+
+run_eunit(Tests, Options) ->
+    case eunit:test(Tests, Options) of
+        ok -> {ok, nil};
+        error -> {error, nil};
+        {error, Term} -> {error, Term}
+    end.
