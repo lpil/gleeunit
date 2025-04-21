@@ -281,7 +281,7 @@ inspect(X) ->
     gleam@string:inspect(X).
 
 print_gleam_failure_reason(
-    #{gleam_error := assert, message := Message, value := Value},
+    #{gleam_error := let_assert, message := Message, value := Value},
     State
 ) ->
     print_colored(indent(5, "~s~n", [Message]), ?RED, State),
