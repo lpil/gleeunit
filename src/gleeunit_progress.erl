@@ -420,7 +420,7 @@ print_results(Data, State) ->
     sync_end(Result).
 
 print_results(Color, 0, _, _, _, State) ->
-    print_colored(Color, "0 tests\n", State);
+    print_colored("0 tests\n", Color, State);
 print_results(Color, Total, Fail, Skip, Cancel, State) ->
     SkipText = format_optional_result(Skip, "skipped"),
     CancelText = format_optional_result(Cancel, "cancelled"),
