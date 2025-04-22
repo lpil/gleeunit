@@ -134,27 +134,6 @@ import gleam/list
 @target(erlang)
 import gleam/string
 
-// We do not need this anymore as `run()` covers that.
-//
-// @target(erlang)
-// fn do_main() -> Nil {
-//   let options = [Verbose, NoTty, Report(#(GleeunitProgress, [Colored(True)]))]
-
-//   let result =
-//     find_files(matching: "**/*.{erl,gleam}", in: "test")
-//     |> list.map(gleam_to_erlang_module_name)
-//     |> list.map(dangerously_convert_string_to_atom(_, Utf8))
-//     |> run_eunit(options)
-//     |> dynamic.result(dynamic.dynamic, dynamic.dynamic)
-//     |> result.unwrap(Error(dynamic.from(Nil)))
-
-//   let code = case result {
-//     Ok(_) -> 0
-//     Error(_) -> 1
-//   }
-//   halt(code)
-// }
-
 @target(erlang)
 @external(erlang, "erlang", "halt")
 fn halt(a: Int) -> Nil
