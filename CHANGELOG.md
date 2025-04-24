@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.3.1 - 2025-04-24
+
+- Fixed printing of `let assert` crashes.
+
 ## v1.3.0 - 2025-02-02
 
 - Fixed deprecation warnings with the Gleam standard library v0.53.0 or later.
