@@ -9,7 +9,6 @@ find_files(Pattern, In) ->
   Results = filelib:wildcard(binary_to_list(Pattern), binary_to_list(In)),
   lists:map(fun list_to_binary/1, Results).
 
-
 should_equal(Actual, Expected) -> 
     ?assertEqual(Expected, Actual),
     nil.

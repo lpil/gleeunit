@@ -1,3 +1,14 @@
+import { readFileSync } from "fs";
+import { Ok, Error as GleamError } from "./gleam.mjs";
+
+export function read_file(path) {
+  try {
+    return new Ok(readFileSync(path));
+  } catch {
+    return new GleamError(undefined);
+  }
+}
+
 async function* gleamFiles(directory) {
   for (let entry of await read_dir(directory)) {
     let path = join_path(directory, entry);

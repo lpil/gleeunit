@@ -39,9 +39,10 @@ expression(#{start := S, 'end' := E, kind := unevaluated}) ->
 
 wrap(#{
     gleam_error := _,
+    file := File,
+    message := Message,
     module := Module,
     function := Function,
-    line := Line,
-    message := Message
+    line := Line
 }, Kind) ->
-    {ok, {gleam_panic, Module, Function, Line, Message, Kind}}.
+    {ok, {gleam_panic, Message, File, Module, Function, Line, Kind}}.

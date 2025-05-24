@@ -2,10 +2,11 @@ import gleam/dynamic
 
 pub type GleamPanic {
   GleamPanic(
+    message: String,
+    file: String,
     module: String,
     function: String,
     line: Int,
-    message: String,
     kind: PanicKind,
   )
 }
