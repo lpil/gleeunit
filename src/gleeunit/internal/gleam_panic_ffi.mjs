@@ -84,5 +84,7 @@ function expression(data) {
 }
 
 function wrap(e, kind) {
-  return new Ok(new GleamPanic(e.module, e.function, e.line, e.message, kind));
+  return new Ok(
+    new GleamPanic(e.message, e.file, e.module, e.function, e.line, kind),
+  );
 }

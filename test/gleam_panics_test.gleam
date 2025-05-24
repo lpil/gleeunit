@@ -10,8 +10,10 @@ import gleeunit/internal/gleam_panic.{
 fn rescue(f: fn() -> t) -> Result(t, dynamic.Dynamic)
 
 pub fn panic_test() {
+  panic
   let assert Error(e) = rescue(fn() { panic })
   let assert Ok(e) = gleam_panic.from_dynamic(e)
+  assert e.file == "test/gleam_panics_test.gleam"
   assert e.kind == Panic
   assert e.function == "panic_test"
   assert e.module == "gleam_panics_test"
@@ -20,8 +22,10 @@ pub fn panic_test() {
 }
 
 pub fn panic_message_test() {
+  todo
   let assert Error(e) = rescue(fn() { panic as "oh my!" })
   let assert Ok(e) = gleam_panic.from_dynamic(e)
+  assert e.file == "test/gleam_panics_test.gleam"
   assert e.kind == Panic
   assert e.function == "panic_message_test"
   assert e.module == "gleam_panics_test"
@@ -32,6 +36,7 @@ pub fn panic_message_test() {
 pub fn todo_test() {
   let assert Error(e) = rescue(fn() { todo })
   let assert Ok(e) = gleam_panic.from_dynamic(e)
+  assert e.file == "test/gleam_panics_test.gleam"
   assert e.kind == Todo
   assert e.function == "todo_test"
   assert e.module == "gleam_panics_test"
@@ -41,8 +46,11 @@ pub fn todo_test() {
 }
 
 pub fn todo_message_test() {
+  let get_names = fn() { ["Lucy"] }
+  assert get_names() == ["Lucy", "Nubi"]
   let assert Error(e) = rescue(fn() { todo as "oh my!" })
   let assert Ok(e) = gleam_panic.from_dynamic(e)
+  assert e.file == "test/gleam_panics_test.gleam"
   assert e.kind == Todo
   assert e.function == "todo_message_test"
   assert e.module == "gleam_panics_test"
@@ -51,6 +59,7 @@ pub fn todo_message_test() {
 }
 
 pub fn let_assert_test() {
+  let assert 1 = 2
   let assert Error(e) =
     rescue(fn() {
       let assert 0 = function.identity(123)
@@ -73,6 +82,7 @@ pub fn let_assert_message_test() {
       let assert 0 = function.identity(321) as "oh dear"
     })
   let assert Ok(e) = gleam_panic.from_dynamic(e)
+  assert e.file == "test/gleam_panics_test.gleam"
   assert e.function == "let_assert_message_test"
   assert e.module == "gleam_panics_test"
   assert e.line > 1
@@ -91,6 +101,7 @@ pub fn assert_expression_test() {
       assert x
     })
   let assert Ok(e) = gleam_panic.from_dynamic(e)
+  assert e.file == "test/gleam_panics_test.gleam"
   assert e.function == "assert_expression_test"
   assert e.module == "gleam_panics_test"
   assert e.line > 1
@@ -112,6 +123,7 @@ pub fn assert_expression_message_test() {
       assert x as "maybe?"
     })
   let assert Ok(e) = gleam_panic.from_dynamic(e)
+  assert e.file == "test/gleam_panics_test.gleam"
   assert e.function == "assert_expression_message_test"
   assert e.module == "gleam_panics_test"
   assert e.line > 1
@@ -132,6 +144,7 @@ pub fn assert_function_test() {
       assert function.identity(False)
     })
   let assert Ok(e) = gleam_panic.from_dynamic(e)
+  assert e.file == "test/gleam_panics_test.gleam"
   assert e.function == "assert_function_test"
   assert e.module == "gleam_panics_test"
   assert e.line > 1
@@ -152,6 +165,7 @@ pub fn assert_function_message_test() {
       assert function.identity(False) as "oh!"
     })
   let assert Ok(e) = gleam_panic.from_dynamic(e)
+  assert e.file == "test/gleam_panics_test.gleam"
   assert e.function == "assert_function_message_test"
   assert e.module == "gleam_panics_test"
   assert e.line > 1
@@ -173,6 +187,7 @@ pub fn assert_binary_operator_test() {
       assert a && function.identity(False)
     })
   let assert Ok(e) = gleam_panic.from_dynamic(e)
+  assert e.file == "test/gleam_panics_test.gleam"
   assert e.function == "assert_binary_operator_test"
   assert e.module == "gleam_panics_test"
   assert e.line > 1
