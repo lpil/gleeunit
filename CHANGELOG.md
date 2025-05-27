@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.4.0 - 2025-04-24
+
+- Added support for `assert`.
+- The console output format has been improved.
+
 ## v1.3.1 - 2025-04-24
 
 - Fixed printing of `let assert` crashes.

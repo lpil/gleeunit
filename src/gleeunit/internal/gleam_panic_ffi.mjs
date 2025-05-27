@@ -30,6 +30,7 @@ export function from_dynamic(error) {
   if (error.gleam_error === "let_assert") {
     let kind = new LetAssert(
       error.start,
+      error.end,
       error.pattern_start,
       error.pattern_end,
       error.value,
@@ -40,8 +41,8 @@ export function from_dynamic(error) {
   if (error.gleam_error === "assert") {
     let kind = new Assert(
       error.start,
+      error.end,
       error.expression_start,
-      error.expression_end,
       assert_kind(error),
     );
     return wrap(error, kind);

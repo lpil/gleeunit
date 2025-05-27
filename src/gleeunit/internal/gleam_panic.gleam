@@ -16,16 +16,12 @@ pub type PanicKind {
   Panic
   LetAssert(
     start: Int,
+    end: Int,
     pattern_start: Int,
     pattern_end: Int,
     value: dynamic.Dynamic,
   )
-  Assert(
-    start: Int,
-    expression_start: Int,
-    expression_end: Int,
-    kind: AssertKind,
-  )
+  Assert(start: Int, end: Int, expression_start: Int, kind: AssertKind)
 }
 
 pub type AssertKind {
