@@ -4,18 +4,19 @@
 from_dynamic(#{
   gleam_error := assert,
   start := Start,
-  expression_start := EStart,
-  expression_end := EEnd
+  'end' := End,
+  expression_start := EStart
 } = E) ->
-    wrap(E, {assert, Start, EStart, EEnd, assert_kind(E)});
+    wrap(E, {assert, Start, End, EStart, assert_kind(E)});
 from_dynamic(#{
   gleam_error := let_assert,
   start := Start,
+  'end' := End,
   pattern_start := PStart,
   pattern_end := PEnd,
   value := Value
 } = E) ->
-    wrap(E, {let_assert, Start, PStart, PEnd, Value});
+    wrap(E, {let_assert, Start, End, PStart, PEnd, Value});
 from_dynamic(#{gleam_error := panic} = E) ->
     wrap(E, panic);
 from_dynamic(#{gleam_error := todo} = E) ->

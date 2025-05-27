@@ -2,6 +2,7 @@ import gleam/bit_array
 import gleam/dynamic
 import gleam/int
 import gleam/io
+import gleam/list
 import gleam/option.{type Option}
 import gleam/result
 import gleam/string
@@ -99,37 +100,37 @@ fn format_gleam_error(
     gleam_panic.Panic -> {
       string.concat([
         bold(red("panic")) <> " " <> location <> "\n",
-        blue(" test") <> ": " <> module <> "." <> function <> "\n",
-        blue(" info") <> ": " <> error.message <> "\n",
+        cyan(" test") <> ": " <> module <> "." <> function <> "\n",
+        cyan(" info") <> ": " <> error.message <> "\n",
       ])
     }
 
     gleam_panic.Todo -> {
       string.concat([
         bold(yellow("todo")) <> " " <> location <> "\n",
-        blue(" test") <> ": " <> module <> "." <> function <> "\n",
-        blue(" info") <> ": " <> error.message <> "\n",
+        cyan(" test") <> ": " <> module <> "." <> function <> "\n",
+        cyan(" info") <> ": " <> error.message <> "\n",
       ])
     }
 
-    gleam_panic.Assert(start:, expression_end:, kind:, ..) -> {
+    gleam_panic.Assert(start:, end:, kind:, ..) -> {
       string.concat([
         bold(red("assert")) <> " " <> location <> "\n",
-        blue(" test") <> ": " <> module <> "." <> function <> "\n",
-        code_snippet(src, start, expression_end),
+        cyan(" test") <> ": " <> module <> "." <> function <> "\n",
+        code_snippet(src, start, end),
         assert_info(kind),
-        blue(" info") <> ": " <> error.message <> "\n",
+        cyan(" info") <> ": " <> error.message <> "\n",
       ])
     }
 
     // TODO: include the whole expression
-    gleam_panic.LetAssert(start:, pattern_end:, value:, ..) -> {
+    gleam_panic.LetAssert(start:, end:, value:, ..) -> {
       string.concat([
         bold(red("let assert")) <> " " <> location <> "\n",
-        blue(" test") <> ": " <> module <> "." <> function <> "\n",
-        code_snippet(src, start, pattern_end),
-        blue("value") <> ": " <> string.inspect(value) <> "\n",
-        blue(" info") <> ": " <> error.message <> "\n",
+        cyan(" test") <> ": " <> module <> "." <> function <> "\n",
+        code_snippet(src, start, end),
+        cyan("value") <> ": " <> string.inspect(value) <> "\n",
+        cyan(" info") <> ": " <> error.message <> "\n",
       ])
     }
   }
@@ -137,21 +138,32 @@ fn format_gleam_error(
 
 fn assert_info(kind: gleam_panic.AssertKind) -> String {
   case kind {
-    gleam_panic.BinaryOperator(operator:, left:, right:) ->
+    gleam_panic.BinaryOperator(left:, right:, ..) -> {
       string.concat([assert_value(" left", left), assert_value("right", right)])
+    }
 
-    gleam_panic.FunctionCall(arguments:) -> todo
+    gleam_panic.FunctionCall(arguments:) -> {
+      arguments
+      |> list.index_map(fn(e, i) {
+        let number = string.pad_start(int.to_string(i), 5, " ")
+        assert_value(number, e)
+      })
+      |> string.concat
+    }
 
-    gleam_panic.OtherExpression(expression:) -> ""
+    gleam_panic.OtherExpression(..) -> ""
   }
 }
 
 fn assert_value(name: String, value: gleam_panic.AssertedExpression) -> String {
-  case value.kind {
-    gleam_panic.Expression(value:) ->
-      blue(name) <> ": " <> string.inspect(value) <> "\n"
+  cyan(name) <> ": " <> inspect_value(value) <> "\n"
+}
 
-    gleam_panic.Literal(..) | gleam_panic.Unevaluated -> ""
+fn inspect_value(value: gleam_panic.AssertedExpression) -> String {
+  case value.kind {
+    gleam_panic.Unevaluated -> grey("unevaluated")
+    gleam_panic.Literal(..) -> grey("literal")
+    gleam_panic.Expression(value:) -> string.inspect(value)
   }
 }
 
@@ -160,7 +172,7 @@ fn code_snippet(src: Option(BitArray), start: Int, end: Int) -> String {
     use src <- result.try(option.to_result(src, Nil))
     use snippet <- result.try(bit_array.slice(src, start, end - start))
     use snippet <- result.try(bit_array.to_string(snippet))
-    let snippet = blue(" code") <> ": " <> snippet <> "\n"
+    let snippet = cyan(" code") <> ": " <> snippet <> "\n"
     Ok(snippet)
   }
   |> result.unwrap("")
@@ -175,8 +187,8 @@ fn bold(text: String) -> String {
   "\u{001b}[1m" <> text <> "\u{001b}[22m"
 }
 
-fn blue(text: String) -> String {
-  "\u{001b}[34m" <> text <> "\u{001b}[39m"
+fn cyan(text: String) -> String {
+  "\u{001b}[36m" <> text <> "\u{001b}[39m"
 }
 
 fn yellow(text: String) -> String {
