@@ -1,5 +1,3 @@
-import gleam/io
-
 pub fn run_todo() -> Nil {
   todo
 }
