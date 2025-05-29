@@ -4,6 +4,8 @@
 
 - Added support for `assert`.
 - The console output format has been improved.
+- The `gleeunit/should` module has been soft-deprecated in favour of Gleam's
+  `assert`. In future releases this module will emit a warning when used.
 
 ## v1.3.1 - 2025-04-24
 
