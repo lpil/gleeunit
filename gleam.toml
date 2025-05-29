@@ -1,7 +1,7 @@
 name = "gleeunit"
 version = "1.3.1"
 licences = ["Apache-2.0"]
-description = "Gleam bindings to Erlang's EUnit test framework"
+description = "A simple test runner for Gleam, using EUnit on Erlang"
 repository = { type = "github", user = "lpil", repo = "gleeunit" }
 links = [{ title = "Sponsor", href = "https://github.com/sponsors/lpil" }]
 gleam = ">= 1.11.0"
