@@ -14,7 +14,7 @@ jobs:
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "25.1"
-          gleam-version: "1.11.0"
+          gleam-version: "1.11.0-rc2"
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
