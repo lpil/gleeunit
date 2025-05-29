@@ -30,8 +30,8 @@ Now any public function with a name ending in `_test` in the `test` directory
 will be found and run as a test.
 
 ```gleam
-pub fn the_universe_test() {
-  let assert 1 = 1
+pub fn some_function_test() {
+  assert some_function() == "Hello!"
 }
 ```
 
