@@ -1,4 +1,4 @@
-import { readFileSync } from "fs";
+import { readFileSync } from "node:fs";
 import { Ok, Error as GleamError } from "./gleam.mjs";
 import * as reporting from "./gleeunit/internal/reporting.mjs";
 
@@ -79,7 +79,7 @@ async function read_dir(path) {
     }
     return items;
   } else {
-    let { readdir } = await import("fs/promises");
+    let { readdir } = await import("node:fs/promises");
     return readdir(path);
   }
 }
@@ -93,7 +93,7 @@ async function async_read_file(path) {
   if (globalThis.Deno) {
     return Deno.readTextFile(path);
   } else {
-    let { readFile } = await import("fs/promises");
+    let { readFile } = await import("node:fs/promises");
     let contents = await readFile(path);
     return contents.toString();
   }
