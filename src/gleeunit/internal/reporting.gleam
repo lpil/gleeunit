@@ -123,7 +123,6 @@ fn format_gleam_error(
       ])
     }
 
-    // TODO: include the whole expression
     gleam_panic.LetAssert(start:, end:, value:, ..) -> {
       string.concat([
         bold(red("let assert")) <> " " <> location <> "\n",
