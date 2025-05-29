@@ -2,12 +2,12 @@ import gleam/list
 import gleam/string
 
 /// Find and run all test functions for the current project using Erlang's EUnit
-/// test framework.
+/// test framework, or a custom JavaScript test runner.
 ///
 /// Any Erlang or Gleam function in the `test` directory with a name ending in
 /// `_test` is considered a test function and will be run.
 ///
-/// If running on JavaScript tests will be run with a custom test runner.
+/// A test that panics is considered a failure.
 ///
 pub fn main() -> Nil {
   do_main()
