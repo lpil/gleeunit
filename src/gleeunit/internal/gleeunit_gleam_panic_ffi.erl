@@ -1,4 +1,4 @@
--module(gleam_panic_ffi).
+-module(gleeunit_gleam_panic_ffi).
 -export([from_dynamic/1]).
 
 from_dynamic(#{
