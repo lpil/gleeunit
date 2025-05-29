@@ -1,27 +1,21 @@
-//// A module for testing your Gleam code. The functions found here are
-//// compatible with the Erlang eunit test framework.
-////
-//// More information on running eunit can be found in [the rebar3
-//// documentation](https://rebar3.org/docs/testing/eunit/).
+//// Use the `assert` keyword instead of this module.
 
 import gleam/option.{type Option, None, Some}
 import gleam/string
 
-@external(erlang, "gleeunit_ffi", "should_equal")
 pub fn equal(a: t, b: t) -> Nil {
   case a == b {
     True -> Nil
     _ ->
       panic as string.concat([
-        "\n\t",
+        "\n",
         string.inspect(a),
-        "\n\tshould equal \n\t",
+        "\nshould equal\n",
         string.inspect(b),
       ])
   }
 }
 
-@external(erlang, "gleeunit_ffi", "should_not_equal")
 pub fn not_equal(a: t, b: t) -> Nil {
   case a != b {
     True -> Nil
@@ -29,13 +23,12 @@ pub fn not_equal(a: t, b: t) -> Nil {
       panic as string.concat([
         "\n",
         string.inspect(a),
-        "\nshould not equal \n",
+        "\nshould not equal\n",
         string.inspect(b),
       ])
   }
 }
 
-@external(erlang, "gleeunit_ffi", "should_be_ok")
 pub fn be_ok(a: Result(a, e)) -> a {
   case a {
     Ok(value) -> value
@@ -43,7 +36,6 @@ pub fn be_ok(a: Result(a, e)) -> a {
   }
 }
 
-@external(erlang, "gleeunit_ffi", "should_be_error")
 pub fn be_error(a: Result(a, e)) -> e {
   case a {
     Error(error) -> error
