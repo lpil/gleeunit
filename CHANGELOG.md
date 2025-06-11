@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.5.0 - 2025-06-11
+
+- Improved the format for unexpected errors on JavaScript.
+
 ## v1.4.0 - 2025-04-24
 
 - Added support for `assert`.

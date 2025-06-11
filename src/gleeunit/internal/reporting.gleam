@@ -77,15 +77,25 @@ pub fn test_failed(
       let src = option.from_result(read_file(error.file))
       format_gleam_error(error, module, function, src)
     }
-    Error(_) -> format_unknown(error)
+    Error(_) -> format_unknown(module, function, error)
   }
 
   io.print("\n" <> message)
   State(..state, failed: state.failed + 1)
 }
 
-fn format_unknown(error: dynamic.Dynamic) -> String {
-  "\nAn unexpected error occurred:\n\n" <> string.inspect(error)
+fn format_unknown(
+  module: String,
+  function: String,
+  error: dynamic.Dynamic,
+) -> String {
+  [
+    grey(module <> "." <> function),
+    "An unexpected error occurred:",
+    "",
+    "  " <> string.inspect(error),
+  ]
+  |> string.join("\n")
 }
 
 fn format_gleam_error(
