@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.5.1 - 2025-06-11
+
+- Fixed a bug where Erlang modules in subdirectories within `test` could cause
+  the test runner to fail.
+
 ## v1.5.0 - 2025-06-11
 
 - Improved the format for unexpected errors on JavaScript.
