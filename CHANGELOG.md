@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Improved formatting of unexpected errors.
+
 ## v1.5.1 - 2025-06-11
 
 - Fixed a bug where Erlang modules in subdirectories within `test` could cause
