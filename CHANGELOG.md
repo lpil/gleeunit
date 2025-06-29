@@ -1,8 +1,9 @@
 # Changelog
 
-## Unreleased
+## v1.6.0 - 2025-06-29
 
 - Improved formatting of unexpected errors.
+- Default EUnit timeout increased to 60 seconds.
 
 ## v1.5.1 - 2025-06-11
 

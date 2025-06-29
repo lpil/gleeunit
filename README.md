@@ -1,19 +1,14 @@
 # gleeunit
 
-A simple test runner for Gleam, using EUnit on Erlang.
+A simple test runner for Gleam, using EUnit on Erlang and a custom runner on JS.
 
-Documentation is available on [HexDocs](https://hexdocs.pm/gleeunit/index.html).
+[![Package Version](https://img.shields.io/hexpm/v/gleeunit)](https://hex.pm/packages/gleeunit)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/gleeunit/)
 
-## Usage
-
-Add this package to your Gleam project.
 
 ```sh
-gleam add gleeunit --dev
+gleam add gleeunit@1 --dev
 ```
-
-And then call the `gleeunit.main` function from your test main function.
-
 ```gleam
 // In test/yourapp_test.gleam
 import gleeunit

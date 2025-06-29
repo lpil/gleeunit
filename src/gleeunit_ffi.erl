@@ -7,7 +7,7 @@ find_files(Pattern, In) ->
   lists:map(fun list_to_binary/1, Results).
 
 run_eunit(Tests, Options) ->
-    case eunit:test(Tests, Options) of
+    case eunit:test({timeout, 60, Tests}, Options) of
         ok -> {ok, nil};
         error -> {error, nil};
         {error, Term} -> {error, Term}
