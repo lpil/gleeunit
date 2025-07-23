@@ -1,5 +1,5 @@
 name = "gleeunit"
-version = "1.6.0"
+version = "1.6.1"
 licences = ["Apache-2.0"]
 description = "A simple test runner for Gleam, using EUnit on Erlang"
 repository = { type = "github", user = "lpil", repo = "gleeunit" }

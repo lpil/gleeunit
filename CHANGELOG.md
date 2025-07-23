@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.6.1 - 2025-07-23
+
+- Fixed a bug where the number of skipped tests could be omitted.
+- Fixed a bug where the wrong exit status code could be used.
+
 ## v1.6.0 - 2025-06-29
 
 - Improved formatting of unexpected errors.

@@ -35,7 +35,7 @@ pub fn finished(state: State) -> Int {
         <> int.to_string(state.failed)
         <> " failures"
       io.println(red(message))
-      0
+      1
     }
     State(failed: 0, ..) -> {
       let message =
@@ -54,6 +54,7 @@ pub fn finished(state: State) -> Int {
         <> " tests, "
         <> int.to_string(state.failed)
         <> " failures, "
+        <> int.to_string(state.skipped)
         <> " skipped"
       io.println(red(message))
       1
