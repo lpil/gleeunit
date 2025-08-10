@@ -23,7 +23,8 @@ pub fn finished(state: State) -> Int {
       1
     }
     State(failed: 0, skipped: 0, ..) -> {
-      let message = "\n" <> int.to_string(state.passed) <> " tests, no failures"
+      let message =
+        "\n" <> int.to_string(state.passed) <> " passed, no failures"
       io.println(green(message))
       0
     }
@@ -31,7 +32,7 @@ pub fn finished(state: State) -> Int {
       let message =
         "\n"
         <> int.to_string(state.passed)
-        <> " tests, "
+        <> " passed, "
         <> int.to_string(state.failed)
         <> " failures"
       io.println(red(message))
@@ -41,7 +42,7 @@ pub fn finished(state: State) -> Int {
       let message =
         "\n"
         <> int.to_string(state.passed)
-        <> " tests, 0 failures, "
+        <> " passed, 0 failures, "
         <> int.to_string(state.skipped)
         <> " skipped"
       io.println(yellow(message))
@@ -51,7 +52,7 @@ pub fn finished(state: State) -> Int {
       let message =
         "\n"
         <> int.to_string(state.passed)
-        <> " tests, "
+        <> " passed, "
         <> int.to_string(state.failed)
         <> " failures, "
         <> int.to_string(state.skipped)
