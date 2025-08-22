@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.6.2 - 2025-08-23
+
+- Fixed a bug where the number of passes was reported as the total number of
+  test.
+
 ## v1.6.1 - 2025-07-23
 
 - Fixed a bug where the number of skipped tests could be omitted.
@@ -36,7 +41,7 @@
 
 ## v1.2.0 - 2024-06-20
 
-- The Gleam standard library version requirement has been relaxed to 
+- The Gleam standard library version requirement has been relaxed to
   `>= 0.33.0 and < 2.0.0`.
 
 ## v1.1.2 - 2024-03-30
