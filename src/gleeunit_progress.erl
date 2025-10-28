@@ -1,9 +1,7 @@
 %% A formatter adapted from Sean Cribb's https://github.com/seancribbs/eunit_formatters
 
 -module(gleeunit_progress).
--behaviour(eunit_listener).
 -define(NOTEST, true).
--include_lib("eunit/include/eunit.hrl").
 
 %% eunit_listener callbacks
 -export([
