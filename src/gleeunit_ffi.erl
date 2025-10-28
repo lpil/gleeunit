@@ -7,8 +7,15 @@ find_files(Pattern, In) ->
   lists:map(fun list_to_binary/1, Results).
 
 run_eunit(Tests, Options) ->
-    case eunit:test({timeout, 60, Tests}, Options) of
-        ok -> {ok, nil};
-        error -> {error, nil};
-        {error, Term} -> {error, Term}
+    case code:which(eunit) of
+        non_existing ->
+            gleeunit@internal@reporting:eunit_missing();
+
+        _ -> 
+            case eunit:test({timeout, 60, Tests}, Options) of
+                ok -> {ok, nil};
+                error -> {error, nil};
+                {error, Term} -> {error, Term}
+            end
     end.
+    

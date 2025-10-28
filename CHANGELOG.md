@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.7.0 - 2025-10-28
+
+- A custom error is now emitted if Eunit is missing from the Erlang runtime.
+
 ## v1.6.2 - 2025-08-23
 
 - Fixed a bug where the number of passes was reported as the total number of

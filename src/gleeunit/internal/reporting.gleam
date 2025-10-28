@@ -86,6 +86,17 @@ pub fn test_failed(
   State(..state, failed: state.failed + 1)
 }
 
+pub fn eunit_missing() -> Result(never, Nil) {
+  let message = bold(red("Error")) <> ": EUnit libraries not found.
+
+Your Erlang installation seems to be incomplete. If you installed Erlang using
+a package manager ensure that you have installed the full Erlang
+distribution instead of a stripped-down version.
+"
+  io.print_error(message)
+  Error(Nil)
+}
+
 fn format_unknown(
   module: String,
   function: String,
