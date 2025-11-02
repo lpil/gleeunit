@@ -12,7 +12,7 @@ run_eunit(Tests, Options) ->
             gleeunit@internal@reporting:eunit_missing();
 
         _ -> 
-            case eunit:test({timeout, 60, Tests}, Options) of
+            case eunit:test(Tests, Options) of
                 ok -> {ok, nil};
                 error -> {error, nil};
                 {error, Term} -> {error, Term}

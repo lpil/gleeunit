@@ -16,7 +16,12 @@ pub fn main() -> Nil {
 
 @external(javascript, "./gleeunit_ffi.mjs", "main")
 fn do_main() -> Nil {
-  let options = [Verbose, NoTty, Report(#(GleeunitProgress, [Colored(True)]))]
+  let options = [
+    Verbose,
+    NoTty,
+    Report(#(GleeunitProgress, [Colored(True)])),
+    ScaleTimeouts(10),
+  ]
 
   let result =
     find_files(matching: "**/*.{erl,gleam}", in: "test")
@@ -74,6 +79,7 @@ type EunitOption {
   Verbose
   NoTty
   Report(#(ReportModuleName, List(GleeunitProgressOption)))
+  ScaleTimeouts(Int)
 }
 
 @external(erlang, "gleeunit_ffi", "run_eunit")

@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.8.0 - 2025-11-02
+
+- Fixed the default timeout being too short on Erlang. All timeout are now
+  scaled by 10.
+
 ## v1.7.0 - 2025-10-28
 
 - A custom error is now emitted if Eunit is missing from the Erlang runtime.
