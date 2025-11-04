@@ -1,12 +1,12 @@
 import { readFileSync } from "node:fs";
-import { Ok, Error as GleamError } from "./gleam.mjs";
+import { Result$Ok, Result$Error } from "./gleam.mjs";
 import * as reporting from "./gleeunit/internal/reporting.mjs";
 
 export function read_file(path) {
   try {
-    return new Ok(readFileSync(path));
+    return Result$Ok(readFileSync(path));
   } catch {
-    return new GleamError(undefined);
+    return Result$Error(undefined);
   }
 }
 
