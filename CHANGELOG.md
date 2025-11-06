@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.9.0 - 2025-11-06
+
+- Updated for Gleam v1.13.0.
+
 ## v1.8.0 - 2025-11-02
 
 - Fixed the default timeout being too short on Erlang. All timeout are now
