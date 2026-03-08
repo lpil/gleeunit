@@ -42,3 +42,41 @@ allow_read = [
   "build",
 ]
 ```
+
+### Parallel test execution
+
+If your tests are independent and don't share mutable state, you can run them
+in parallel using EUnit's `inparallel` mode:
+
+```gleam
+// In test/yourapp_test.gleam
+import gleeunit
+
+pub fn main() {
+  gleeunit.main_parallel()
+}
+```
+
+To switch back to sequential execution, change `main_parallel()` to `main()`.
+
+On JavaScript targets, `main_parallel()` falls back to sequential execution
+since Node.js and Deno are single-threaded.
+
+#### When parallel tests are safe
+
+Tests can run in parallel when each test is fully isolated. For example:
+
+- Each test creates its own in-memory database (no shared connections)
+- No named processes are started (use unnamed processes or unique names)
+- No shared ETS tables with `named_table` (unnamed ETS is fine)
+- No writes to the file system
+
+#### When parallel tests are not safe
+
+Tests that share mutable state will produce flaky failures when parallelized:
+
+- A shared database connection or shared database state between tests
+- Named processes (e.g., `gen_server` registered with a fixed name)
+- Shared named ETS tables modified by multiple tests
+- Tests that read/write the same files
+- Tests that depend on execution order

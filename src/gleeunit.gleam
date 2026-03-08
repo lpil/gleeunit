@@ -14,6 +14,15 @@ pub fn main() -> Nil {
   do_main()
 }
 
+/// Find and run all test functions in parallel using EUnit's inparallel.
+/// Tests must not share mutable state (named processes, shared ETS, files).
+///
+/// On JavaScript targets, this falls back to sequential execution.
+///
+pub fn main_parallel() -> Nil {
+  do_main_parallel()
+}
+
 @external(javascript, "./gleeunit_ffi.mjs", "main")
 fn do_main() -> Nil {
   let options = [
@@ -28,6 +37,28 @@ fn do_main() -> Nil {
     |> list.map(gleam_to_erlang_module_name)
     |> list.map(dangerously_convert_string_to_atom(_, Utf8))
     |> run_eunit(options)
+
+  let code = case result {
+    Ok(_) -> 0
+    Error(_) -> 1
+  }
+  halt(code)
+}
+
+@external(javascript, "./gleeunit_ffi.mjs", "main")
+fn do_main_parallel() -> Nil {
+  let options = [
+    Verbose,
+    NoTty,
+    Report(#(GleeunitProgress, [Colored(True)])),
+    ScaleTimeouts(10),
+  ]
+
+  let result =
+    find_files(matching: "**/*.{erl,gleam}", in: "test")
+    |> list.map(gleam_to_erlang_module_name)
+    |> list.map(dangerously_convert_string_to_atom(_, Utf8))
+    |> run_eunit_parallel(options)
 
   let code = case result {
     Ok(_) -> 0
@@ -84,3 +115,6 @@ type EunitOption {
 
 @external(erlang, "gleeunit_ffi", "run_eunit")
 fn run_eunit(a: List(Atom), b: List(EunitOption)) -> Result(Nil, a)
+
+@external(erlang, "gleeunit_ffi", "run_eunit_parallel")
+fn run_eunit_parallel(a: List(Atom), b: List(EunitOption)) -> Result(Nil, a)
