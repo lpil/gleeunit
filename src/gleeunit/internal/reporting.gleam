@@ -204,28 +204,49 @@ pub fn test_skipped(state: State, module: String, function: String) -> State {
   State(..state, skipped: state.skipped + 1)
 }
 
+@external(erlang, "gleeunit_ffi", "getenv")
+fn getenv(name: String) -> Result(String, Nil)
+
+fn no_color_env_set() -> Bool {
+  case getenv("NO_COLOR") {
+    Ok(_) -> True
+    Error(_) ->
+      case getenv("NO_COLOUR") {
+        Ok(_) -> True
+        Error(_) -> False
+      }
+  }
+}
+
+fn color(start: String, end: String, text: String) -> String {
+  case no_color_env_set() {
+    True -> text
+    False -> start <> text <> end
+  }
+}
+
 fn bold(text: String) -> String {
-  "\u{001b}[1m" <> text <> "\u{001b}[22m"
+  color("\u{001b}[1m", "\u{001b}[22m", text)
 }
 
 fn cyan(text: String) -> String {
-  "\u{001b}[36m" <> text <> "\u{001b}[39m"
+  color("\u{001b}[36m", "\u{001b}[39m", text)
 }
 
 fn yellow(text: String) -> String {
-  "\u{001b}[33m" <> text <> "\u{001b}[39m"
+  color("\u{001b}[33m", "\u{001b}[39m", text)
 }
 
 fn green(text: String) -> String {
-  "\u{001b}[32m" <> text <> "\u{001b}[39m"
+  color("\u{001b}[32m", "\u{001b}[39m", text)
 }
 
 fn red(text: String) -> String {
-  "\u{001b}[31m" <> text <> "\u{001b}[39m"
+  color("\u{001b}[31m", "\u{001b}[39m", text)
 }
 
 fn grey(text: String) -> String {
-  "\u{001b}[90m" <> text <> "\u{001b}[39m"
+  color("\u{001b}[90m", "\u{001b}[39m", text)
 }
 
 @external(erlang, "file", "read_file")

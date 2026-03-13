@@ -1,6 +1,6 @@
 -module(gleeunit_ffi).
 
--export([find_files/2, run_eunit/2]).
+-export([find_files/2, run_eunit/2, getenv/1]).
 
 find_files(Pattern, In) ->
   Results = filelib:wildcard(binary_to_list(Pattern), binary_to_list(In)),
@@ -19,3 +19,8 @@ run_eunit(Tests, Options) ->
             end
     end.
     
+getenv(Name) ->
+    case os:getenv(binary_to_list(Name)) of
+        false -> {error, nil};
+        Value -> {ok, list_to_binary(Value)}
+    end.
