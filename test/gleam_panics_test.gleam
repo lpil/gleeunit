@@ -1,9 +1,11 @@
+import envoy
 import gleam/dynamic
 import gleam/function
 import gleeunit/internal/gleam_panic.{
   Assert, BinaryOperator, Expression, FunctionCall, LetAssert, Literal,
   OtherExpression, Panic, Todo, Unevaluated,
 }
+import shellout
 import testhelper
 
 @external(erlang, "gleeunit_test_ffi", "rescue")
@@ -205,4 +207,66 @@ pub fn assert_binary_operator_test() {
   assert right.end == right.start + 24
   assert right.end == end
   assert right.kind == Unevaluated
+}
+
+pub fn javascript_unhandled_promise_test() {
+  case envoy.get("GLEEUNIT_RUN_UNHANDLED_PROMISE_TEST") {
+    Error(_) -> {
+      // Spawn gleam test
+      let assert Error(#(code, _)) =
+        shellout.command(
+          run: "gleam",
+          with: ["test", "-t", "javascript"],
+          in: ".",
+          opt: [
+            shellout.SetEnvironment([
+              #("GLEEUNIT_RUN_UNHANDLED_PROMISE_TEST", "1"),
+            ]),
+          ],
+        )
+        as "immediate rejected promise: expected error due to unhandled promise rejection"
+
+      assert code == 1
+        as "immediate rejected promise: expected exit code 1 due to unhandled promise rejection"
+
+      // Spawn gleam test
+      let assert Error(#(code, _)) =
+        shellout.command(
+          run: "gleam",
+          with: ["test", "-t", "javascript"],
+          in: ".",
+          opt: [
+            shellout.SetEnvironment([
+              #("GLEEUNIT_RUN_UNHANDLED_PROMISE_TEST", "2"),
+            ]),
+          ],
+        )
+        as "delayed rejected promise: expected error due to unhandled promise rejection"
+
+      assert code == 1
+        as "delayed rejected promise: expected exit code 1 due to unhandled promise rejection"
+    }
+    Ok("1") -> {
+      echo "inside spawned gleam test, testing immediate reject"
+      javascript_test_promise()
+    }
+    Ok(_) -> {
+      echo "inside spawned gleam test, testing delayed reject"
+      javascript_test_delayed_promise()
+    }
+  }
+}
+
+@external(javascript, "./gleeunit_test_ffi.mjs", "promise_fail_test")
+fn javascript_test_promise() -> Nil {
+  // Not relevant to other targets
+  echo "This is not relevant to other targets!"
+  Nil
+}
+
+@external(javascript, "./gleeunit_test_ffi.mjs", "delayed_promise_fail_test")
+fn javascript_test_delayed_promise() -> Nil {
+  // Not relevant to other targets
+  echo "This is not relevant to other targets!"
+  Nil
 }

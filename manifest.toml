@@ -2,10 +2,14 @@
 # You typically do not need to edit this file
 
 packages = [
+  { name = "envoy", version = "1.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "envoy", source = "hex", outer_checksum = "850DA9D29D2E5987735872A2B5C81035146D7FE19EFC486129E44440D03FD832" },
   { name = "gleam_stdlib", version = "0.60.0", build_tools = ["gleam"], requirements = [], otp_app = "gleam_stdlib", source = "hex", outer_checksum = "621D600BB134BC239CB2537630899817B1A42E60A1D46C5E9F3FAE39F88C800B" },
+  { name = "shellout", version = "1.8.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "shellout", source = "hex", outer_checksum = "C416356D45151F298108C9DB9CD1EDE0313F620B5EDBB5766CD7237659D87841" },
   { name = "testhelper", version = "1.0.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], source = "local", path = "testhelper" },
 ]
 
 [requirements]
+envoy = { version = ">= 1.1.0 and < 2.0.0" }
 gleam_stdlib = { version = ">= 0.60.0 and < 1.0.0" }
+shellout = { version = ">= 1.8.0 and < 2.0.0" }
 testhelper = { path = "./testhelper" }
