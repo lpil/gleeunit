@@ -40,6 +40,21 @@ export async function main() {
   let packageName = await readRootPackageName();
   let dist = `../${packageName}/`;
 
+  // Since we want to be able to report unhandled Promise rejections as test failures,
+  // we need to keep track of them as they happen. This is because they can occur at any
+  // time during the test run, and we want to be able to report them at the end of the test run,
+  // after all tests have been executed.
+  const rejections = [];
+
+  // Node's approach to unhandled rejections is different
+  // from the Web/Deno API, in that attaching an event listener
+  // through `globalThis.addEventListener` or `globalThis.onunhandledrejection`
+  // still causes the process to prematurely exit. Instead, we have to use `process.on`,
+  // as it will allow us to manually handle the exiting behavior.
+  globalThis.process?.on("unhandledRejection", (reason) => {
+    rejections.push(reason);
+  });
+
   for await (let path of await gleamFiles("test")) {
     let js_path = path.slice("test/".length).replace(".gleam", ".mjs");
     let module = await import(join_path(dist, js_path));
@@ -55,8 +70,28 @@ export async function main() {
     }
   }
 
-  const status = reporting.finished(state);
-  exit(status);
+  const preExit = () => {
+    // While a likely module/function can be inferred from what test is
+    // currently running, unhandled Promise rejections outlast the lifetime
+    // of ES module dynamic import or function calls, which means that they
+    // can reject on any module/function running.
+    //
+    // We also put this logic at the end of the test runner so that we can run all tests.
+    for (const entry of rejections) {
+      state = reporting.test_failed(state, "Unknown module", "Unknown function", entry);
+    }
+
+    const status = reporting.finished(state);
+    exit(status);
+  };
+
+  // If we're able to subscribe to beforeExit, then we can report unhandled rejections that
+  // occur after the tests are finished.
+  if (globalThis.process?.on) {
+    process.on("beforeExit", preExit);
+  } else {
+    preExit();
+  }
 }
 
 export function crash(message) {
