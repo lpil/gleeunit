@@ -205,6 +205,7 @@ pub fn test_skipped(state: State, module: String, function: String) -> State {
 }
 
 @external(erlang, "gleeunit_ffi", "getenv")
+@external(javascript, "../../gleeunit_ffi.mjs", "getenv")
 fn getenv(name: String) -> Result(String, Nil)
 
 fn no_color_env_set() -> Bool {
