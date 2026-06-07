@@ -183,7 +183,7 @@ fn assert_value(name: String, value: gleam_panic.AssertedExpression) -> String {
 fn inspect_value(value: gleam_panic.AssertedExpression) -> String {
   case value.kind {
     gleam_panic.Unevaluated -> grey("unevaluated")
-    gleam_panic.Literal(..) -> grey("literal")
+    gleam_panic.Literal(value:) -> string.inspect(value)
     gleam_panic.Expression(value:) -> string.inspect(value)
   }
 }
