@@ -2,6 +2,20 @@ import { readFileSync } from "node:fs";
 import { Result$Ok, Result$Error } from "./gleam.mjs";
 import * as reporting from "./gleeunit/internal/reporting.mjs";
 
+export function getenv(name) {
+  try {
+    let value;
+    if (globalThis.Deno) {
+      value = Deno.env.get(name);
+    } else {
+      value = process.env[name];
+    }
+    return value !== undefined ? Result$Ok(value) : Result$Error(undefined);
+  } catch {
+    return Result$Error(undefined);
+  }
+}
+
 export function read_file(path) {
   try {
     return Result$Ok(readFileSync(path));
