@@ -34,27 +34,27 @@ handle_end(test, Data, State) ->
     case proplists:get_value(output, Data) of
         undefined -> ok;
         <<>> -> ok;
-        Out -> gleam@io:print(Out)
+        Out -> print(Out)
     end,
 
     case proplists:get_value(status, Data) of
         ok ->
-            ?reporting:test_passed(State);
+            ?reporting:test_passed(State, fun print/1);
         {skipped, _Reason} ->
-            ?reporting:test_skipped(State, Module, Function);
+            ?reporting:test_skipped(State, Module, Function, fun print/1);
         {error, {_, Exception, _Stack}} ->
-            ?reporting:test_failed(State, Module, Function, Exception)
+            ?reporting:test_failed(State, Module, Function, Exception, fun print/1)
     end.
 
 
 handle_cancel(_test_or_group, Data, State) ->
-    ?reporting:test_failed(State, <<"gleeunit">>, <<"main">>, Data).
+    ?reporting:test_failed(State, <<"gleeunit">>, <<"main">>, Data, fun print/1).
 
 terminate({ok, _Data}, State) ->
-    ?reporting:finished(State),
+    ?reporting:finished(State, fun print/1),
     ok;
 terminate({error, Reason}, State) ->
-    ?reporting:finished(State),
+    ?reporting:finished(State, fun print/1),
     io:fwrite("
 Eunit failed:
 
@@ -63,6 +63,9 @@ Eunit failed:
 This is probably a bug in gleeunit. Please report it.
 ", [Reason]),
     sync_end(error).
+
+print(String) ->
+    gleam@io:print(String).
 
 sync_end(Result) ->
     receive

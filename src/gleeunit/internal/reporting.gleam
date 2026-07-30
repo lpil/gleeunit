@@ -9,43 +9,32 @@ import gleam/string
 import gleeunit/internal/gleam_panic.{type GleamPanic}
 
 pub type State {
-  State(passed: Int, failed: Int, skipped: Int)
+  State(passed: Int, failed: Int, skipped: Int, todos: Int)
 }
 
 pub fn new_state() -> State {
-  State(passed: 0, failed: 0, skipped: 0)
+  State(passed: 0, failed: 0, skipped: 0, todos: 0)
 }
 
-pub fn finished(state: State) -> Int {
+pub fn finished(state: State, print: fn(String) -> Nil) -> Int {
   case state {
-    State(passed: 0, failed: 0, skipped: 0) -> {
-      io.println("\nNo tests found!")
+    State(passed: 0, failed: 0, skipped: 0, todos: 0) -> {
+      print("\nNo tests found!\n")
       1
     }
-    State(failed: 0, skipped: 0, ..) -> {
+    State(failed: 0, skipped: 0, todos: 0, ..) -> {
       let message =
         "\n" <> int.to_string(state.passed) <> " passed, no failures"
-      io.println(green(message))
+      print(green(message) <> "\n")
       0
-    }
-    State(skipped: 0, ..) -> {
-      let message =
-        "\n"
-        <> int.to_string(state.passed)
-        <> " passed, "
-        <> int.to_string(state.failed)
-        <> " failures"
-      io.println(red(message))
-      1
     }
     State(failed: 0, ..) -> {
       let message =
         "\n"
         <> int.to_string(state.passed)
-        <> " passed, 0 failures, "
-        <> int.to_string(state.skipped)
-        <> " skipped"
-      io.println(yellow(message))
+        <> " passed, 0 failures"
+        <> suffix(state)
+      print(yellow(message) <> "\n")
       1
     }
     State(..) -> {
@@ -54,17 +43,28 @@ pub fn finished(state: State) -> Int {
         <> int.to_string(state.passed)
         <> " passed, "
         <> int.to_string(state.failed)
-        <> " failures, "
-        <> int.to_string(state.skipped)
-        <> " skipped"
-      io.println(red(message))
+        <> " failures"
+        <> suffix(state)
+      print(red(message) <> "\n")
       1
     }
   }
 }
 
-pub fn test_passed(state: State) -> State {
-  io.print(green("."))
+fn suffix(state: State) -> String {
+  let todo_part = case state.todos {
+    0 -> ""
+    n -> ", " <> int.to_string(n) <> " todo"
+  }
+  let skipped_part = case state.skipped {
+    0 -> ""
+    n -> ", " <> int.to_string(n) <> " skipped"
+  }
+  todo_part <> skipped_part
+}
+
+pub fn test_passed(state: State, print: fn(String) -> Nil) -> State {
+  print(green("."))
   State(..state, passed: state.passed + 1)
 }
 
@@ -73,17 +73,25 @@ pub fn test_failed(
   module: String,
   function: String,
   error: dynamic.Dynamic,
+  print: fn(String) -> Nil,
 ) -> State {
-  let message = case gleam_panic.from_dynamic(error) {
-    Ok(error) -> {
-      let src = option.from_result(read_file(error.file))
-      format_gleam_error(error, module, function, src)
+  case gleam_panic.from_dynamic(error) {
+    Ok(gleam_panic.GleamPanic(kind: gleam_panic.Todo, ..)) -> {
+      print(yellow("."))
+      State(..state, todos: state.todos + 1)
     }
-    Error(_) -> format_unknown(module, function, error)
+    Ok(e) -> {
+      let src = option.from_result(read_file(e.file))
+      let message = format_gleam_error(e, module, function, src)
+      print("\n" <> message)
+      State(..state, failed: state.failed + 1)
+    }
+    Error(_) -> {
+      let message = format_unknown(module, function, error)
+      print("\n" <> message)
+      State(..state, failed: state.failed + 1)
+    }
   }
-
-  io.print("\n" <> message)
-  State(..state, failed: state.failed + 1)
 }
 
 pub fn eunit_missing() -> Result(never, Nil) {
@@ -199,8 +207,13 @@ fn code_snippet(src: Option(BitArray), start: Int, end: Int) -> String {
   |> result.unwrap("")
 }
 
-pub fn test_skipped(state: State, module: String, function: String) -> State {
-  io.print("\n" <> module <> "." <> function <> yellow(" skipped"))
+pub fn test_skipped(
+  state: State,
+  module: String,
+  function: String,
+  print: fn(String) -> Nil,
+) -> State {
+  print("\n" <> module <> "." <> function <> yellow(" skipped"))
   State(..state, skipped: state.skipped + 1)
 }
 

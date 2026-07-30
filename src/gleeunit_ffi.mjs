@@ -47,16 +47,24 @@ export async function main() {
       if (!fnName.endsWith("_test")) continue;
       try {
         await module[fnName]();
-        state = reporting.test_passed(state);
+        state = reporting.test_passed(state, print);
       } catch (error) {
         let moduleName = js_path.slice(0, -4);
-        state = reporting.test_failed(state, moduleName, fnName, error);
+        state = reporting.test_failed(state, moduleName, fnName, error, print);
       }
     }
   }
 
-  const status = reporting.finished(state);
+  const status = reporting.finished(state, print);
   exit(status);
+}
+
+function print(string) {
+  if (globalThis.Deno) {
+    Deno.stdout.writeSync(new TextEncoder().encode(string));
+  } else {
+    process.stdout.write(string);
+  }
 }
 
 export function crash(message) {
